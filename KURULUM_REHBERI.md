@@ -176,4 +176,4 @@ Frontend backend'e bağlanamazsa, backend'in çalıştığından emin olun ve CO
 
 ## 7. Yardım
 
-Herhangi bir sorunla karşılaşırsanız, ekip liderinize danışmaktan çekinmeyin! 
+Herhangi bir sorunla karşılaşırsanız, ekip liderinize danışmaktan çekinmeyin! DEV TEST 131231312
