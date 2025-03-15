@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from rest_framework import viewsets, status, permissions, generics
 from rest_framework.response import Response
@@ -288,6 +289,8 @@ class ForgotPasswordView(APIView):
 def generate_random_password(length=8):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
+
+
 
 # Araç işlemleri için view'lar
 # - Araçları listeleme

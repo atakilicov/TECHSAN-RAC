@@ -134,3 +134,8 @@ class ForgotPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"error": "E-posta alanı gereklidir."}
             )
+        
+        class UserSerializer(serializers.ModelSerializer):
+             class Meta:
+                model = CustomUser
+                fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'address', 'city', 'birth_date']
