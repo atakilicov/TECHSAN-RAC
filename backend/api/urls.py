@@ -1,22 +1,12 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from . import views
+from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+)
+from .views import RegisterView, EmailTokenObtainPairView
 
-# URL kalıplarını tanımlayın
 urlpatterns = [
-    # Kullanıcı kimlik doğrulama URL'leri
-    # - Login (JWT token alımı için)
-    # - Register (Yeni kullanıcı kaydı)
-    # - Profile (Kullanıcı profili işlemleri)
-    # - Change Password (Şifre değiştirme)
-    
-    # Araç URL'leri
-    # - Araç listesi
-    # - Araç detayı
-    # - Araç arama ve filtreleme
-    
-    # Kiralama URL'leri
-    # - Kiralama oluşturma
-    # - Kiralama listesi
-    # - Kiralama durumu güncelleme
+    # Kullanıcı işlemleri
+    path('register/', RegisterView.as_view(), name='register'),
+    path('token/', EmailTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ] 

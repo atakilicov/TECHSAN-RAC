@@ -1,22 +1,74 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from .models import CustomUser
+from drf_yasg.utils import swagger_serializer_method
 
-# Kullanıcı Serializer
-# - Kullanıcı bilgilerini (id, username, email vb.) API'de kullanmak için serileştirme
-
-# Register Serializer
-# - Kullanıcı kaydı oluşturmak için gerekli alanları içerecek (username, email, password, vb.)
-# - Parola doğrulama ve validasyon işlemleri içerecek
-
-# UserProfile Serializer
-# - Kullanıcı profil bilgilerini (telefon, adres, profil resmi) API'de kullanmak için serileştirme
-
-# ChangePassword Serializer
-# - Parola değiştirme işlemi için gerekli alanları içerecek
-
-# Car Serializer
-# - Araç bilgilerini API'de kullanmak için serileştirme
-
-# Rental Serializer
-# - Kiralama bilgilerini API'de kullanmak için serileştirme
-# - Toplam ücret hesaplama mantığını içerecek 
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True, 
+        required=True, 
+        validators=[validate_password],
+        style={'input_type': 'password'},
+        help_text="Şifre en az 8 karakter olmalıdır."
+    )
+    password2 = serializers.CharField(
+        write_only=True, 
+        required=True,
+        style={'input_type': 'password'},
+        help_text="Şifre tekrarı"
+    )
+    
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'password', 'password2', 'first_name', 'last_name', 
+                 'phone', 'address', 'profile_picture', 'birth_date', 'city']
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True},
+            'email': {'required': True},
+            'profile_picture': {'required': True},
+            'birth_date': {'required': True, 'format': '%Y-%m-%d', 'help_text': 'YYYY-MM-DD formatında olmalıdır.'},
+            'city': {'required': True, 'help_text': 'Geçerli bir şehir seçin (adana, istanbul, ankara vb.)'},
+            'phone': {'required': True},
+            'address': {'required': True}
+        }
+    
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Şifreler eşleşmiyor!"})
+        
+        if CustomUser.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({"email": "Bu e-posta adresi zaten kullanılıyor."})
+        
+        # Şifre uzunluğunu kontrol et
+        if len(attrs['password']) < 8:
+            raise serializers.ValidationError({"password": "Şifre en az 8 karakter olmalıdır."})
+            
+        return attrs
+    
+    def create(self, validated_data):
+        # password2 alanını kaldır
+        validated_data.pop('password2', None)
+        
+        # Boş profil resmi yüklenmemesi için kontrol
+        if not validated_data.get('profile_picture'):
+            validated_data.pop('profile_picture', None)
+            
+        # Doğum tarihi girilmezse kaldır
+        if not validated_data.get('birth_date'):
+            validated_data.pop('birth_date', None)
+        
+        # password'ü ayır
+        password = validated_data.pop('password')
+        
+        # Email'i username olarak kullan
+        email = validated_data.get('email')
+        
+        # Kullanıcıyı oluştur
+        user = CustomUser.objects.create(username=email, **validated_data)
+        
+        # Şifreyi ayarla
+        user.set_password(password)
+        user.save()
+        
+        return user
