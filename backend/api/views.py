@@ -299,3 +299,27 @@ def generate_random_password(length=8):
 # - Kiralama listesi görüntüleme
 # - Kiralama durumu güncelleme
 
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcı çıkışı yapar",
+        operation_summary="Kullanıcı çıkışı",
+        tags=["Kullanıcı İşlemleri"],
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Çıkış başarılı",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+        }
+    )
+    def post(self, request):
+        # JWT kullanıldığı için backend'de özel bir işlem yapmaya gerek yok
+        # Frontend'de token'lar silindiği sürece kullanıcı çıkış yapmış sayılır
+        return Response({"message": "Çıkış başarılı"}, status=status.HTTP_200_OK)
+
