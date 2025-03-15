@@ -1,0 +1,44 @@
+# Django ve Django REST Framework
+Django==4.2.7
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.0
+django-cors-headers==4.3.1
+
+# API Dokümantasyonu
+drf-yasg==1.21.7
+
+# Görüntü İşleme
+Pillow==10.1.0
+
+# E-posta ve SSL Sertifikaları
+certifi==2025.1.31
+pyOpenSSL==23.3.0
+
+# Güvenlik
+PyJWT==2.8.0
+cryptography==41.0.5
+
+# Veritabanı
+sqlparse==0.4.4
+
+# Dosya Yükleme ve İşleme
+python-magic==0.4.27
+python-magic-bin==0.4.14; sys_platform == 'win32'
+
+# Ortam Değişkenleri
+python-dotenv==1.0.0
+
+# WSGI Sunucusu (Üretim Ortamı İçin)
+gunicorn==21.2.0
+
+# Sıkıştırma ve Performans
+whitenoise==6.6.0
+
+# Tarih ve Saat İşlemleri
+pytz==2023.3
+
+# HTTP İstekleri
+requests==2.31.0
+
+# Hata Ayıklama ve Geliştirme Araçları
+django-debug-toolbar==4.2.0; python_version >= '3.8' 
