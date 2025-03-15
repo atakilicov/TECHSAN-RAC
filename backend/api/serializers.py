@@ -72,3 +72,41 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         
         return user
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        required=True,
+        help_text="Kullanıcı e-posta adresi"
+    )
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'},
+        help_text="Kullanıcı şifresi"
+    )
+    
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        
+        if email and password:
+            # E-posta adresine sahip kullanıcıyı kontrol et
+            try:
+                user = CustomUser.objects.get(email=email)
+            except CustomUser.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"email": "Bu e-posta adresine sahip kullanıcı bulunamadı."}
+                )
+                
+            # Kullanıcı adı ve şifre doğrulaması
+            if not user.check_password(password):
+                raise serializers.ValidationError(
+                    {"password": "Geçersiz şifre."}
+                )
+                
+            attrs['user'] = user
+            return attrs
+        else:
+            raise serializers.ValidationError(
+                {"error": "E-posta ve şifre alanları gereklidir."}
+            )

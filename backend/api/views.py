@@ -5,7 +5,8 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
-from .serializers import RegisterSerializer
+from rest_framework.views import APIView
+from .serializers import RegisterSerializer, LoginSerializer
 from .models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -118,6 +119,71 @@ class RegisterView(generics.CreateAPIView):
                     "access": str(refresh.access_token)
                 }
             }, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = LoginSerializer
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcı girişi yapar ve JWT token döndürür",
+        operation_summary="Kullanıcı girişi",
+        tags=["Kullanıcı İşlemleri"],
+        request_body=LoginSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Giriş başarılı",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'user': openapi.Schema(type=openapi.TYPE_OBJECT, description='Kullanıcı bilgileri'),
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                        'tokens': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'refresh': openapi.Schema(type=openapi.TYPE_STRING, description='Yenileme token\'ı'),
+                                'access': openapi.Schema(type=openapi.TYPE_STRING, description='Erişim token\'ı'),
+                            }
+                        ),
+                    }
+                )
+            ),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz kimlik bilgileri",
+            status.HTTP_401_UNAUTHORIZED: "Giriş başarısız"
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            # JWT token oluştur
+            refresh = RefreshToken.for_user(user)
+            
+            # Kullanıcı bilgilerini hazırla
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'phone': user.phone,
+                'address': user.address,
+                'city': user.city,
+            }
+            
+            if user.profile_picture:
+                user_data['profile_picture'] = request.build_absolute_uri(user.profile_picture.url)
+            
+            return Response({
+                "user": user_data,
+                "message": "Giriş başarılı",
+                "tokens": {
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token)
+                }
+            }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
