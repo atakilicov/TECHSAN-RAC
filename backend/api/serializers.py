@@ -26,7 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'first_name': {'required': True},
             'last_name': {'required': True},
             'email': {'required': True},
-            'profile_picture': {'required': True},
+            'profile_picture': {'required': False},
             'birth_date': {'required': True, 'format': '%Y-%m-%d', 'help_text': 'YYYY-MM-DD formatında olmalıdır.'},
             'city': {'required': True, 'help_text': 'Geçerli bir şehir seçin (adana, istanbul, ankara vb.)'},
             'phone': {'required': True},
@@ -109,4 +109,28 @@ class LoginSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError(
                 {"error": "E-posta ve şifre alanları gereklidir."}
+            )
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        required=True,
+        help_text="Şifre sıfırlama için kullanıcı e-posta adresi"
+    )
+    
+    def validate(self, attrs):
+        email = attrs.get('email')
+        
+        if email:
+            # E-posta adresine sahip kullanıcıyı kontrol et
+            try:
+                user = CustomUser.objects.get(email=email)
+                attrs['user'] = user
+                return attrs
+            except CustomUser.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"email": "Bu e-posta adresine sahip kullanıcı bulunamadı."}
+                )
+        else:
+            raise serializers.ValidationError(
+                {"error": "E-posta alanı gereklidir."}
             )

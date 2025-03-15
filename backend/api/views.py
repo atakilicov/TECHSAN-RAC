@@ -6,12 +6,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer
 from .models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.core.mail import send_mail, EmailMessage
+import random
+import string
 
 # Kullanıcı işlemleri için view'lar
 # - Kullanıcı kaydı (register)
@@ -117,7 +120,8 @@ class RegisterView(generics.CreateAPIView):
                 "tokens": {
                     "refresh": str(refresh),
                     "access": str(refresh.access_token)
-                }
+                },
+                "redirect_url": "/homepage"  # Yönlendirme URL'si
             }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -182,10 +186,108 @@ class LoginView(APIView):
                 "tokens": {
                     "refresh": str(refresh),
                     "access": str(refresh.access_token)
-                }
+                },
+                "redirect_url": "/homepage"  # Yönlendirme URL'si
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ForgotPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ForgotPasswordSerializer
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcının şifresini sıfırlar ve yeni şifreyi e-posta ile gönderir",
+        operation_summary="Şifremi Unuttum",
+        tags=["Kullanıcı İşlemleri"],
+        request_body=ForgotPasswordSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Şifre sıfırlama başarılı",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz e-posta adresi",
+            status.HTTP_404_NOT_FOUND: "Kullanıcı bulunamadı",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "E-posta gönderme hatası"
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = ForgotPasswordSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            # Yeni rastgele şifre oluştur
+            new_password = generate_random_password()
+            
+            # Kullanıcının şifresini güncelle
+            user.set_password(new_password)
+            user.save()
+            
+            # E-posta gönder
+            try:
+                # HTML içerikli e-posta gönderme
+                html_content = f"""
+                <html>
+                <head>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+                        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                        .header {{ background-color: #4CAF50; color: white; padding: 10px; text-align: center; }}
+                        .content {{ padding: 20px; border: 1px solid #ddd; }}
+                        .password {{ font-size: 18px; font-weight: bold; background-color: #f5f5f5; padding: 10px; }}
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Şifre Sıfırlama</h2>
+                        </div>
+                        <div class="content">
+                            <p>Merhaba {user.first_name} {user.last_name},</p>
+                            <p>Şifre sıfırlama talebiniz başarıyla işleme alınmıştır. Yeni şifreniz aşağıdadır:</p>
+                            <p class="password">{new_password}</p>
+                            <p>Lütfen giriş yaptıktan sonra şifrenizi değiştirin.</p>
+                            <p>Eğer bu talebi siz yapmadıysanız, lütfen bizimle iletişime geçin.</p>
+                            <p>Saygılarımızla,<br>TECHSAN Ekibi</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """
+                
+                email = EmailMessage(
+                    subject="Şifre Sıfırlama",
+                    body=html_content,
+                    from_email="limonata0712@gmail.com",
+                    to=[user.email],
+                )
+                email.content_subtype = "html"  # HTML içerik olarak belirt
+                email.send(fail_silently=False)
+                
+                return Response({
+                    "message": "Yeni şifreniz e-posta adresinize gönderildi.",
+                    "redirect_url": "/login"  # Şifre sıfırlama sonrası login sayfasına yönlendir
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                # Şifreyi geri al
+                user.set_password(None)
+                user.save()
+                
+                return Response({
+                    "error": f"E-posta gönderilirken bir hata oluştu: {str(e)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def generate_random_password(length=8):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 # Araç işlemleri için view'lar
 # - Araçları listeleme
