@@ -152,6 +152,30 @@ export const forgotPassword = async (email) => {
   }
 };
 
+/**
+ * Şifre Sıfırlama Onay Fonksiyonu
+ * 
+ * @param {string} token - Şifre sıfırlama token'ı
+ * @param {string} newPassword - Kullanıcının yeni şifresi
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, kullanıcının şifresini sıfırlamak için kullanılır.
+ * E-posta ile gelen token ve yeni şifre ile şifre sıfırlama işlemi gerçekleştirilir.
+ */
+export const resetPasswordConfirm = async (token, newPassword) => {
+  try {
+    // Backend'e POST isteği gönder
+    const response = await api.post('reset-password/', { 
+      token, 
+      new_password: newPassword 
+    });
+    return response.data;
+  } catch (error) {
+    // Hata durumunda, API'den gelen hata mesajını veya genel hata mesajını fırlat
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 // --------------------
 // Yardımcı Fonksiyonlar
 // --------------------
@@ -207,6 +231,24 @@ export const testBackendConnection = async () => {
       message: 'Backend bağlantısı başarısız!',
       error: error.message
     };
+  }
+};
+
+/**
+ * Şehirler Listesini Getir
+ * 
+ * @returns {Promise} - API'den dönen şehirler listesi
+ * 
+ * Bu fonksiyon, backend'den Türkiye'deki şehirlerin listesini getirir.
+ * Kayıt formunda ve kullanıcı profilinde şehir seçimi için kullanılır.
+ */
+export const getCities = async () => {
+  try {
+    const response = await api.get('cities/');
+    return response.data;
+  } catch (error) {
+    console.error("Şehirler listesi alınamadı:", error);
+    throw error.response ? error.response.data : error.message;
   }
 };
 

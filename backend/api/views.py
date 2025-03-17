@@ -15,6 +15,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.mail import send_mail, EmailMessage
 import random
 import string
+from .choice import CustomUserChoices
 
 # Kullanıcı işlemleri için view'lar
 # - Kullanıcı kaydı (register)
@@ -322,4 +323,33 @@ class LogoutView(APIView):
         # JWT kullanıldığı için backend'de özel bir işlem yapmaya gerek yok
         # Frontend'de token'lar silindiği sürece kullanıcı çıkış yapmış sayılır
         return Response({"message": "Çıkış başarılı"}, status=status.HTTP_200_OK)
+
+# Şehirler listesi için API endpoint
+class CitiesView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Türkiye'deki şehirlerin listesini döndürür",
+        operation_summary="Şehirler Listesi",
+        tags=["Genel"],
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Şehirler listesi",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'value': openapi.Schema(type=openapi.TYPE_STRING, description='Şehir değeri'),
+                            'label': openapi.Schema(type=openapi.TYPE_STRING, description='Şehir etiketi'),
+                        }
+                    )
+                )
+            )
+        }
+    )
+    def get(self, request):
+        # Türkiye şehirlerini döndür
+        cities = [{"value": city[0], "label": city[1]} for city in CustomUserChoices.TURKISH_CITIES]
+        return Response(cities, status=status.HTTP_200_OK)
 

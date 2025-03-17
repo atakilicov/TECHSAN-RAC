@@ -30,7 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             'birth_date': {'required': True, 'format': '%Y-%m-%d', 'help_text': 'YYYY-MM-DD formatında olmalıdır.'},
             'city': {'required': True, 'help_text': 'Geçerli bir şehir seçin (adana, istanbul, ankara vb.)'},
             'phone': {'required': True},
-            'address': {'required': True}
+            'address': {'required': False}
         }
     
     def validate(self, attrs):
