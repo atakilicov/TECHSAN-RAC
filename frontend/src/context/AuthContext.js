@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { login as apiLogin } from '../api'; // API fonksiyonlarını import et
 
 // Authentication Context
 // - Kullanıcı kimlik doğrulama durumunu global olarak yönetir
@@ -17,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   // Sayfa yüklendiğinde token kontrolü
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       if (token) {
         try {
           // Token geçerliliğini kontrol etmek için API çağrısı yapılabilir
@@ -27,7 +28,8 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
         } catch (error) {
           console.error("Token geçerli değil:", error);
-          localStorage.removeItem('token');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           localStorage.removeItem('user');
         }
       }
@@ -37,28 +39,15 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
   
-  // Login, Logout, Register fonksiyonları
-  const login = async (email, password) => {
-    // Gerçek API çağrısı burada yapılacak
-    // Şimdilik demo amaçlı bir token oluşturuyoruz
-    const demoToken = "demo_token_123456";
-    const demoUser = {
-      id: 1,
-      username: "demo_user",
-      email: email,
-      firstName: "Demo",
-      lastName: "User"
-    };
-    
-    localStorage.setItem('token', demoToken);
-    localStorage.setItem('user', JSON.stringify(demoUser));
-    setUser(demoUser);
+  // Login fonksiyonu (context için basitleştirildi - sadece state güncelleme)
+  const login = (userData) => {
+    setUser(userData);
     setIsAuthenticated(true);
-    return demoUser;
   };
   
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);

@@ -2,21 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { forgotPassword } from "../api";
 
-// Şifremi Unuttum Sayfası
-// - E-posta adresi için form
-// - Form doğrulama (validation)
-// - Şifre sıfırlama talebi gönderme
-// - Hata mesajlarını gösterme
-// - Başarılı talep sonrası bilgi mesajı
-
 const ForgotPassword = () => {
-  // State tanımlamaları
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // Form gönderme işlevi
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -24,7 +15,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await forgotPassword(email);
+      await forgotPassword(email);
       setMessage("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
     } catch (err) {
       setError("Geçersiz e-posta adresi veya hata oluştu.");
@@ -33,7 +24,6 @@ const ForgotPassword = () => {
     }
   };
   
-  // JSX return
   return (
     <div className="course-register-container">
       <div className="course-register-left">

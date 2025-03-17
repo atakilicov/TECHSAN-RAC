@@ -1,0 +1,337 @@
+/* Temel sayfa düzeni */
+body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Ana içerik stilleri */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 70px; /* Navbar yüksekliğine göre boşluk bırakıyoruz */
+}
+
+/* Ana Sayfa Stilleri */
+.home-page {
+  width: 100%;
+}
+
+/* Hero Bölümü */
+.hero-container {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/Rolssroyce.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.main-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.main-title span {
+  display: block;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  color: #E67E22;
+}
+
+.hero-subtitle {
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tagline {
+  margin: 2rem 0;
+}
+
+.tagline p {
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.status-badge {
+  display: inline-block;
+  background-color: rgba(230, 126, 34, 0.2);
+  color: #E67E22;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: 1px solid rgba(230, 126, 34, 0.5);
+}
+
+/* CTA Butonları */
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.cta-button {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cta-button.primary {
+  background-color: #E67E22;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+}
+
+.cta-button.secondary {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.cta-button.large {
+  padding: 1.2rem 3rem;
+  font-size: 1.2rem;
+}
+
+.cta-button.primary:hover {
+  background-color: #D35400;
+  transform: translateY(-2px);
+}
+
+.cta-button.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Özellikler Bölümü */
+.features-section {
+  padding: 5rem 2rem;
+  background-color: #fff;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.section-title p {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  border: 1px solid #f0f0f0;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.feature-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Markalar Bölümü */
+.brands-section {
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.brands-section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 3rem;
+  color: #333;
+}
+
+.brand-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #888;
+  padding: 1rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.brand:hover {
+  color: #E67E22;
+  border-color: #E67E22;
+  transform: scale(1.05);
+}
+
+/* Kapanış CTA Bölümü */
+.closing-cta {
+  padding: 6rem 2rem;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+}
+
+.closing-cta h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.closing-cta p {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Form elemanları renkleri */
+::placeholder {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
+:-ms-input-placeholder, 
+::-ms-input-placeholder {
+  color: #ffffff !important;
+}
+
+/* Select ve option elementleri */
+select {
+  color: #ffffff !important;
+}
+
+option {
+  color: #ffffff;
+  background-color: #222;
+}
+
+/* Responsive tasarım */
+@media (max-width: 992px) {
+  .main-title {
+    font-size: 3rem;
+  }
+  
+  .main-title span {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  .section-title h2 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2.5rem;
+  }
+  
+  .main-title span {
+    font-size: 1.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.3rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .feature-cards {
+    gap: 2rem;
+  }
+  
+  .brand-logos {
+    gap: 1.5rem;
+  }
+  
+  .brand {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.2rem;
+  }
+  
+  .closing-cta h2 {
+    font-size: 2rem;
+  }
+} 

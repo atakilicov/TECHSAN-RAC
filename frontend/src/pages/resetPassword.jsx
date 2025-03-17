@@ -2,16 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { resetPasswordConfirm } from "../api";
 
-// Şifre Sıfırlama Sayfası
-// - Yeni şifre ve şifre doğrulama için form
-// - Form doğrulama (validation)
-// - Token doğrulama
-// - Hata mesajlarını gösterme
-// - Başarılı sıfırlama sonrası yönlendirme
-
 const ResetPassword = () => {
-  // URL parametrelerini alma
-  // State tanımlamaları
   const { token } = useParams(); 
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
@@ -21,8 +12,6 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  
-  // Form gönderme işlevi
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -37,7 +26,7 @@ const ResetPassword = () => {
     try {
       await resetPasswordConfirm(token, newPassword);
       setMessage("Şifre başarıyla sıfırlandı. Giriş sayfasına yönlendiriliyorsunuz...");
-      setTimeout(() => navigate("/login"), 2000); // 2 saniye sonra giriş sayfasına yönlendir
+      setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
       setMessage("Şifre sıfırlama başarısız. Token süresi dolmuş olabilir.");
     } finally {
@@ -53,7 +42,6 @@ const ResetPassword = () => {
     }
   };
   
-  // JSX return
   return (
     <div className="course-register-container">
       <div className="course-register-left">
