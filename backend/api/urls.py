@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
-from .views import RegisterView, EmailTokenObtainPairView, LoginView, ForgotPasswordView, ResetPasswordView, CitiesView
+from .views import RegisterView, EmailTokenObtainPairView, LoginView, ForgotPasswordView, ResetPasswordView, CitiesView, UserProfileUpdateView
 
 urlpatterns = [
     # Kullanıcı işlemleri
@@ -15,4 +15,5 @@ urlpatterns = [
     
     # Genel
     path('cities/', CitiesView.as_view(), name='cities'),
+    path('users/profile/', UserProfileUpdateView.as_view(), name='user-profile'),
 ] 

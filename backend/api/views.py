@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserSerializer
 from .models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -398,4 +398,24 @@ class CitiesView(APIView):
         # Türkiye şehirlerini döndür
         cities = [{"value": city[0], "label": city[1]} for city in CustomUserChoices.TURKISH_CITIES]
         return Response(cities, status=status.HTTP_200_OK)
+
+class UserProfileUpdateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        """Kullanıcı profil bilgilerini getir"""
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+    
+    def put(self, request):
+        """Kullanıcı profil bilgilerini güncelle"""
+        user = request.user
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -39,6 +39,18 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
   
+  // User state'ini güncelleyen özel fonksiyon
+  const updateUser = (userData) => {
+    console.log("Kullanıcı verisi güncelleniyor:", userData);
+    // State'i güncelle
+    setUser(userData);
+    
+    // LocalStorage'ı da güncelle
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
+  };
+  
   // Login fonksiyonu (context için basitleştirildi - sadece state güncelleme)
   const login = (userData) => {
     setUser(userData);
@@ -59,7 +71,8 @@ export const AuthProvider = ({ children }) => {
       user,
       loading,
       login,
-      logout
+      logout,
+      setUser: updateUser
     }}>
       {children}
     </AuthContext.Provider>

@@ -5,6 +5,9 @@ from drf_yasg.utils import swagger_serializer_method
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -175,3 +178,9 @@ class ResetPasswordSerializer(serializers.Serializer):
         
         attrs['user'] = user
         return attrs
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'address', 'city', 'birth_date']
+        read_only_fields = ['email']  # Email değiştirilemez

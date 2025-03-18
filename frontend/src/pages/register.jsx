@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
 import { register, getCities } from "../api";
 import '../styles/base.css';
+import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -123,6 +124,27 @@ const Register = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Profil güncelleme API isteği
+  const updateProfile = async (userData) => {
+    try {
+      // API URL'ini ayarla
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+      
+      // Backend'e istek gönder
+      const response = await axios.put(`${apiUrl}/users/profile/`, userData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error("Profil güncellenirken hata:", error);
+      throw error.response?.data || { error: "Profil güncellenemedi" };
     }
   };
 

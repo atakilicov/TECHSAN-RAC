@@ -280,4 +280,21 @@ export const getCities = async () => {
   }
 };
 
+/**
+ * Kullanıcı Profili Güncelleme Fonksiyonu
+ * 
+ * @param {Object} userData - Güncellenecek kullanıcı bilgileri
+ * @returns {Promise} - API'den dönen yanıt
+ */
+export const updateUserProfile = async (userData) => {
+  try {
+    // API isteği
+    const response = await api.put('/users/profile', userData);
+    return response.data;
+  } catch (error) {
+    console.error("Profil güncelleme hatası:", error);
+    throw error.response?.data || { error: "Profil güncellenemedi" };
+  }
+};
+
 export default api;
