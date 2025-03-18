@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { resetPasswordConfirm } from "../api";
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from "../context/AuthContext";
+import { changePassword } from "../api";
 
-const ResetPassword = () => {
-  const { uid, token } = useParams();
+const ChangePassword = () => {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,28 +19,55 @@ const ResetPassword = () => {
     setMessage("");
     setError("");
     
-    // Şifrelerin eşleşip eşleşmediğini kontrol et
     if (newPassword !== confirmPassword) {
-      setError("Şifreler eşleşmiyor.");
+      setError("Yeni şifreler eşleşmiyor.");
       return;
     }
     
     setLoading(true);
 
     try {
-      const response = await resetPasswordConfirm(uid, token, newPassword, confirmPassword);
+      const response = await changePassword(currentPassword, newPassword);
       setMessage(response.message || "Şifreniz başarıyla güncellenmiştir.");
       
-      // Kullanıcıyı giriş sayfasına yönlendir
+      // Form'u temizle
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      
+      // Başarılı mesajı gösterdikten sonra profil sayfasına yönlendir
       setTimeout(() => {
-        navigate('/login');
+        navigate('/profile');
       }, 2000);
     } catch (err) {
-      setError(err.error || "Şifre sıfırlama işlemi başarısız oldu.");
+      setError(err.error || "Şifre değiştirme işlemi başarısız oldu.");
     } finally {
       setLoading(false);
     }
   };
+
+  // Eğer kullanıcı giriş yapmamışsa, giriş sayfasına yönlendir
+  if (!user) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        padding: '20px',
+        backgroundColor: '#f5f5f5'
+      }}>
+        <p style={{
+          padding: '15px 20px',
+          backgroundColor: 'rgba(202, 43, 43, 0.2)',
+          color: '#ff8a8a',
+          borderRadius: '10px',
+          marginBottom: '1.5rem',
+          fontWeight: '500'
+        }}>Lütfen giriş yapın.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container" style={{
@@ -69,11 +98,11 @@ const ResetPassword = () => {
         <h2 style={{
           color: '#fff',
           textAlign: 'center',
-          marginBottom: '1.5rem',
+          marginBottom: '1.2rem',
           fontSize: '1.75rem',
           fontWeight: '600'
         }}>
-          Yeni Şifre Oluştur
+          Şifremi Değiştir
         </h2>
 
         <p style={{
@@ -82,7 +111,7 @@ const ResetPassword = () => {
           marginBottom: '1.2rem',
           fontSize: '0.95rem'
         }}>
-          Lütfen yeni şifrenizi girin ve onaylayın.
+          Şifrenizi değiştirmek için mevcut şifrenizi ve yeni şifrenizi girin.
         </p>
 
         {message && (
@@ -115,6 +144,28 @@ const ResetPassword = () => {
           <div className="form-group" style={{ marginBottom: '1.2rem', position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
+              placeholder="Mevcut Şifre"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+                fontWeight: '400',
+                letterSpacing: '0.3px',
+              }}
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '1.2rem', position: 'relative' }}>
+            <input
+              type={showPassword ? "text" : "password"}
               placeholder="Yeni Şifre"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -137,7 +188,7 @@ const ResetPassword = () => {
           <div className="form-group" style={{ marginBottom: '1.2rem', position: 'relative' }}>
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Şifreyi Tekrar Girin"
+              placeholder="Yeni Şifreyi Tekrar Girin"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -203,7 +254,7 @@ const ResetPassword = () => {
               boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)'
             }}
           >
-            {loading ? "İŞLENİYOR..." : "YENİ ŞİFREMİ KAYDET"}
+            {loading ? "İŞLENİYOR..." : "ŞİFREMİ DEĞİŞTİR"}
           </button>
         </form>
 
@@ -214,7 +265,7 @@ const ResetPassword = () => {
           color: '#fff'
         }}>
           <p>
-            <Link to="/login" style={{ color: '#9A3158', fontWeight: '500', textDecoration: 'none' }}>Giriş Sayfası</Link>
+            <Link to="/profile" style={{ color: '#9A3158', fontWeight: '500', textDecoration: 'none' }}>Profile Dön</Link>
           </p>
         </div>
       </div>
@@ -222,4 +273,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword; 
+export default ChangePassword; 

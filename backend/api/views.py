@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
 from .models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -16,6 +16,10 @@ from django.core.mail import send_mail, EmailMessage
 import random
 import string
 from .choice import CustomUserChoices
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.conf import settings
 
 # Kullanıcı işlemleri için view'lar
 # - Kullanıcı kaydı (register)
@@ -195,16 +199,15 @@ class LoginView(APIView):
 
 class ForgotPasswordView(APIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = ForgotPasswordSerializer
     
     @swagger_auto_schema(
-        operation_description="Kullanıcının şifresini sıfırlar ve yeni şifreyi e-posta ile gönderir",
+        operation_description="Kullanıcının şifresini sıfırlaması için e-posta gönderir",
         operation_summary="Şifremi Unuttum",
         tags=["Kullanıcı İşlemleri"],
         request_body=ForgotPasswordSerializer,
         responses={
             status.HTTP_200_OK: openapi.Response(
-                description="Şifre sıfırlama başarılı",
+                description="Şifre sıfırlama e-postası gönderildi",
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -223,16 +226,15 @@ class ForgotPasswordView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             
-            # Yeni rastgele şifre oluştur
-            new_password = generate_random_password()
+            # Şifre sıfırlama token'ı oluştur
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
             
-            # Kullanıcının şifresini güncelle
-            user.set_password(new_password)
-            user.save()
+            # Frontend URL'sini oluştur
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}"
             
             # E-posta gönder
             try:
-                # HTML içerikli e-posta gönderme
                 html_content = f"""
                 <html>
                 <head>
@@ -241,7 +243,15 @@ class ForgotPasswordView(APIView):
                         .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
                         .header {{ background-color: #4CAF50; color: white; padding: 10px; text-align: center; }}
                         .content {{ padding: 20px; border: 1px solid #ddd; }}
-                        .password {{ font-size: 18px; font-weight: bold; background-color: #f5f5f5; padding: 10px; }}
+                        .button {{ 
+                            display: inline-block;
+                            padding: 10px 20px;
+                            background-color: #4CAF50;
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            margin-top: 15px;
+                        }}
                     </style>
                 </head>
                 <body>
@@ -251,9 +261,11 @@ class ForgotPasswordView(APIView):
                         </div>
                         <div class="content">
                             <p>Merhaba {user.first_name} {user.last_name},</p>
-                            <p>Şifre sıfırlama talebiniz başarıyla işleme alınmıştır. Yeni şifreniz aşağıdadır:</p>
-                            <p class="password">{new_password}</p>
-                            <p>Lütfen giriş yaptıktan sonra şifrenizi değiştirin.</p>
+                            <p>Şifre sıfırlama talebinizi aldık. Aşağıdaki bağlantıya tıklayarak yeni şifrenizi oluşturabilirsiniz:</p>
+                            <p><a href="{reset_url}" class="button">Şifremi Sıfırla</a></p>
+                            <p>Veya aşağıdaki bağlantıyı tarayıcınıza kopyalayabilirsiniz:</p>
+                            <p>{reset_url}</p>
+                            <p>Bu bağlantı 24 saat boyunca geçerlidir.</p>
                             <p>Eğer bu talebi siz yapmadıysanız, lütfen bizimle iletişime geçin.</p>
                             <p>Saygılarımızla,<br>TECHSAN Ekibi</p>
                         </div>
@@ -272,17 +284,51 @@ class ForgotPasswordView(APIView):
                 email.send(fail_silently=False)
                 
                 return Response({
-                    "message": "Yeni şifreniz e-posta adresinize gönderildi.",
-                    "redirect_url": "/login"  # Şifre sıfırlama sonrası login sayfasına yönlendir
+                    "message": "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."
                 }, status=status.HTTP_200_OK)
             except Exception as e:
-                # Şifreyi geri al
-                user.set_password(None)
-                user.save()
-                
                 return Response({
                     "error": f"E-posta gönderilirken bir hata oluştu: {str(e)}"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcının şifresini sıfırlar",
+        operation_summary="Şifre Sıfırlama",
+        tags=["Kullanıcı İşlemleri"],
+        request_body=ResetPasswordSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Şifre başarıyla sıfırlandı",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz token veya şifre",
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = ResetPasswordSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            new_password = serializer.validated_data['new_password']
+            
+            # Kullanıcının şifresini güncelle
+            user.set_password(new_password)
+            user.save()
+            
+            return Response({
+                "message": "Şifreniz başarıyla sıfırlandı.",
+                "redirect_url": "/login"
+            }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

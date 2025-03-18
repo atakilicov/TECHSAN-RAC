@@ -58,12 +58,13 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #E67E22;
+  background: linear-gradient(135deg, #6D213C, #300A10); /* Açık bordo -> koyu bordo gradyan */
   color: #fff;
 }
 
 .btn:hover {
-  background-color: #D35400;
+  background: linear-gradient(135deg, #7A2945, #3C0D16); /* Daha canlı gradyan */
+  box-shadow: 0 4px 15px rgba(48, 10, 16, 0.4);
 }
 
 /* Alert */
@@ -91,7 +92,7 @@
   text-align: center;
   font-size: 1.8rem;
   font-weight: 600;
-  color: #E67E22;
+  color: #6D213C; /* Daha açık bordo tonu */
   letter-spacing: 0.5px;
 }
 
@@ -104,7 +105,11 @@
 }
 
 .auth-links a {
-  color: #F39C12;
+  color: #9A3158; /* Daha açık, canlı bordo */
   font-weight: 600;
   text-decoration: none;
+}
+
+.auth-links a:hover {
+  color: #B63A69; /* Hover durumunda daha açık ton */
 } 

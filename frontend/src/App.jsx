@@ -11,6 +11,7 @@ import Home from './pages/home';
 import Profile from './pages/profile';
 import ForgotPassword from './pages/forgotPassword';
 import ResetPassword from './pages/resetPassword';
+import ChangePassword from './pages/changePassword';
 
 function App() {
   return (
@@ -29,8 +30,11 @@ function App() {
               {/* Şifremi unuttum sayfası */}
               <Route path="/forgot-password" element={<ForgotPassword />} />
               
-              {/* Şifre sıfırlama sayfası */}
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              {/* Şifre sıfırlama sayfası - URL parametrelerini düzenleme */}
+              <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
+              
+              {/* Şifre değiştirme sayfası */}
+              <Route path="/change-password" element={<ChangePassword />} />
               
               {/* Profil sayfası */}
               <Route path="/profile" element={<Profile />} />

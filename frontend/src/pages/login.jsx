@@ -32,7 +32,7 @@ const Login = () => {
 
   return (
     <div className="auth-container" style={{
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("/images/Rolssroyce.jpg")',
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("/images/Rollsroyce.jpeg")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -45,8 +45,8 @@ const Login = () => {
       fontFamily: '"Poppins", "Segoe UI", Roboto, sans-serif',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-end',
-      paddingRight: '5%'
+      justifyContent: 'center',
+      padding: '0 5%'
     }}>
       <div className="auth-card" style={{
         backgroundColor: 'rgba(10, 10, 10, 0.3)',
@@ -56,10 +56,9 @@ const Login = () => {
         border: '1px solid rgba(255, 255, 255, 0.2)',
         borderTop: 'none',
         borderRadius: '10px',
-        marginLeft: 'auto',
-        marginRight: '5%',
         maxWidth: '360px',
         padding: '35px 30px',
+        width: '100%',
         transition: 'all 0.3s ease'
       }}>
         <h2 style={{ 
@@ -67,7 +66,7 @@ const Login = () => {
           textAlign: 'center',
           fontSize: '1.8rem',
           fontWeight: '600',
-          color: '#E67E22',
+          color: '#6D213C',
           letterSpacing: '0.5px'
         }}>GİRİŞ YAP</h2>
         
@@ -136,7 +135,7 @@ const Login = () => {
             className="btn"
             disabled={loading}
             style={{
-              backgroundColor: loading ? 'rgba(230, 126, 34, 0.6)' : '#E67E22',
+              background: loading ? 'rgba(48, 10, 16, 0.6)' : 'linear-gradient(135deg, #6D213C, #300A10)',
               color: '#fff',
               height: '48px',
               fontSize: '1rem',
@@ -147,7 +146,7 @@ const Login = () => {
               borderRadius: '10px',
               cursor: loading ? 'not-allowed' : 'pointer',
               letterSpacing: '0.5px',
-              boxShadow: '0 2px 10px rgba(230, 126, 34, 0.3)'
+              boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)'
             }}
           >
             {loading ? "GİRİŞ YAPILIYOR..." : "GİRİŞ YAP"}
@@ -161,10 +160,10 @@ const Login = () => {
           color: '#fff'
         }}>
           <p style={{ marginBottom: '0.6rem' }}>
-            <Link to="/forgot-password" style={{ color: '#F39C12', fontWeight: '500', textDecoration: 'none' }}>Şifremi Unuttum</Link>
+            <Link to="/forgot-password" style={{ color: '#9A3158', fontWeight: '500', textDecoration: 'none' }}>Şifremi Unuttum</Link>
           </p>
           <p>
-            Hesabınız yok mu? <Link to="/register" style={{ color: '#F39C12', fontWeight: '600', textDecoration: 'none' }}>Kayıt Ol</Link>
+            Hesabınız yok mu? <Link to="/register" style={{ color: '#9A3158', fontWeight: '600', textDecoration: 'none' }}>Kayıt Ol</Link>
           </p>
         </div>
       </div>

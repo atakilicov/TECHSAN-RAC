@@ -2,6 +2,9 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import CustomUser
 from drf_yasg.utils import swagger_serializer_method
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -134,3 +137,41 @@ class ForgotPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {"error": "E-posta alanı gereklidir."}
             )
+
+class ResetPasswordSerializer(serializers.Serializer):
+    uid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+    new_password = serializers.CharField(
+        required=True, 
+        min_length=8,
+        style={'input_type': 'password'}
+    )
+    confirm_password = serializers.CharField(
+        required=True,
+        style={'input_type': 'password'}
+    )
+    
+    def validate(self, attrs):
+        # Şifrelerin eşleşip eşleşmediğini kontrol et
+        if attrs.get('new_password') != attrs.get('confirm_password'):
+            raise serializers.ValidationError(
+                {"error": "Şifreler eşleşmiyor."}
+            )
+        
+        # Token'ın ve kullanıcı ID'sinin geçerliliğini kontrol et
+        try:
+            uid = force_str(urlsafe_base64_decode(attrs.get('uid')))
+            user = CustomUser.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            raise serializers.ValidationError(
+                {"error": "Geçersiz kullanıcı ID'si."}
+            )
+        
+        # Token'ın geçerliliğini kontrol et
+        if not default_token_generator.check_token(user, attrs.get('token')):
+            raise serializers.ValidationError(
+                {"error": "Geçersiz veya süresi dolmuş token."}
+            )
+        
+        attrs['user'] = user
+        return attrs

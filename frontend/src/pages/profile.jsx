@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from "../context/AuthContext";
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const { user } = useContext(AuthContext);
@@ -8,21 +9,24 @@ const Profile = () => {
 
   // Profil sayfası için modern renkler
   const colors = {
-    primary: '#E67E22',
+    primary: '#6D213C', /* Açık bordo tonu */
     primaryLight: 'rgba(230, 126, 34, 0.1)',
     primaryDark: '#d35400',
-    secondary: '#7D5A3C',
+    secondary: '#9A3158', /* Daha açık, canlı bordo */
     secondaryLight: 'rgba(125, 90, 60, 0.1)',
+    tertiary: '#300A10', /* Koyu bordo, istenen renk kodu */
     cardBg: '#fff',
     cardBgDark: '#f9f9f9',
     textDark: '#333',
     textMedium: '#666',
-    textLight: '#999',
-    border: 'rgba(0, 0, 0, 0.1)',
+    textLight: '#868e96',
+    border: '#dee2e6',
     success: '#2ecc71',
     successLight: 'rgba(46, 204, 113, 0.1)',
     error: '#e74c3c',
-    errorLight: 'rgba(231, 76, 60, 0.1)'
+    errorLight: 'rgba(231, 76, 60, 0.1)',
+    background: '#f8f9fa',
+    text: '#343a40'
   };
 
   // Eğer kullanıcı giriş yapmamışsa, giriş yapma uyarısı göster
@@ -57,7 +61,7 @@ const Profile = () => {
           }}>
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill={colors.primary}/>
-            </svg>
+              </svg>
           </div>
           <h3 style={{
             fontSize: '1.8rem',
@@ -82,7 +86,7 @@ const Profile = () => {
             textDecoration: 'none',
             fontWeight: '600',
             transition: 'all 0.3s ease',
-            boxShadow: '0 8px 20px rgba(230, 126, 34, 0.2)'
+            boxShadow: '0 8px 20px rgba(48, 10, 16, 0.2)'
           }}>Giriş Yap</a>
         </div>
       </div>
@@ -90,8 +94,8 @@ const Profile = () => {
   }
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #f9f9f9, #f0f0f0)',
+    <div className="profile-container" style={{
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url("/images/Rollsroyce.jpeg")',
       minHeight: 'calc(100vh - 80px)',
       padding: '3rem 1rem'
     }}>
@@ -141,7 +145,7 @@ const Profile = () => {
             fontSize: '2.5rem',
             fontWeight: '700',
             color: colors.primary,
-            boxShadow: '0 10px 25px rgba(230, 126, 34, 0.15)',
+            boxShadow: '0 10px 25px rgba(48, 10, 16, 0.15)',
             position: 'relative',
             border: `3px solid ${colors.cardBg}`,
             margin: '0 auto',
@@ -243,7 +247,7 @@ const Profile = () => {
                 fontWeight: '500'
               }}>
                 {message}
-              </div>
+      </div>
             )}
             
             <div style={{
@@ -278,9 +282,9 @@ const Profile = () => {
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5ZM19 12H21C21 7 17 3 12 3V5C15.9 5 19 8.1 19 12ZM15 12H17C17 9.2 14.8 7 12 7V9C13.7 9 15 10.3 15 12Z" fill={colors.primary}/>
-                  </svg>
+            </svg>
                 </div>
                 <div>
                   <div style={{
@@ -319,8 +323,8 @@ const Profile = () => {
                 }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill={colors.primary}/>
-                  </svg>
-                </div>
+                    </svg>
+                  </div>
                 <div>
                   <div style={{
                     color: colors.textLight,
@@ -333,8 +337,8 @@ const Profile = () => {
                     fontSize: '1.1rem'
                   }}>{user.address || "Belirtilmemiş"}</div>
                 </div>
-              </div>
-              
+                </div>
+                
               <div style={{
                 backgroundColor: colors.cardBgDark,
                 borderRadius: '15px',
@@ -358,8 +362,8 @@ const Profile = () => {
                 }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 11V5L12 2L9 5V7H3V21H21V11H15ZM7 19H5V17H7V19ZM7 15H5V13H7V15ZM7 11H5V9H7V11ZM13 19H11V17H13V19ZM13 15H11V13H13V15ZM13 11H11V9H13V11ZM13 7H11V5H13V7ZM19 19H17V17H19V19ZM19 15H17V13H19V15Z" fill={colors.primary}/>
-                  </svg>
-                </div>
+                    </svg>
+                  </div>
                 <div>
                   <div style={{
                     color: colors.textLight,
@@ -372,8 +376,8 @@ const Profile = () => {
                     fontSize: '1.1rem'
                   }}>{user.city || "Belirtilmemiş"}</div>
                 </div>
-              </div>
-              
+                </div>
+                
               <div style={{
                 backgroundColor: colors.cardBgDark,
                 borderRadius: '15px',
@@ -397,8 +401,8 @@ const Profile = () => {
                 }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 3H18V1H16V3H8V1H6V3H5C3.89 3 3.01 3.9 3.01 5L3 19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V8H19V19ZM7 10H12V15H7V10Z" fill={colors.primary}/>
-                  </svg>
-                </div>
+                    </svg>
+                  </div>
                 <div>
                   <div style={{
                     color: colors.textLight,
@@ -411,6 +415,186 @@ const Profile = () => {
                     fontSize: '1.1rem'
                   }}>{user.birth_date ? new Date(user.birth_date).toLocaleDateString('tr-TR') : "Belirtilmemiş"}</div>
                 </div>
+              </div>
+            </div>
+            
+            {/* Şifre Yönetimi Bölümü - Kişisel bilgilerin altına ekleniyor */}
+            <h3 style={{
+              fontSize: '1.6rem',
+              fontWeight: '600',
+              color: colors.textDark,
+              marginTop: '3rem',
+              marginBottom: '2rem',
+              position: 'relative',
+              paddingBottom: '0.8rem'
+            }}>
+              Şifre Yönetimi
+              <span style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '60px',
+                height: '3px',
+                backgroundColor: colors.primary,
+                borderRadius: '2px'
+              }}></span>
+            </h3>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem',
+              marginTop: '1.5rem'
+            }}>
+              {/* Şifre Değiştir Kartı */}
+              <div style={{
+                backgroundColor: colors.cardBgDark,
+                borderRadius: '15px',
+                padding: '1.5rem',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.03)',
+                border: `1px solid ${colors.border}`,
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 15px 35px rgba(0, 0, 0, 0.05)'
+                }
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1.2rem',
+                }}>
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    backgroundColor: colors.primaryLight,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15.1 8H8.9V6C8.9 4.29 10.29 2.9 12 2.9C13.71 2.9 15.1 4.29 15.1 6V8Z" fill={colors.primary}/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{
+                      color: colors.textDark,
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.4rem'
+                    }}>Şifremi Değiştir</div>
+                    <div style={{
+                      color: colors.textLight,
+                      fontSize: '0.9rem',
+                    }}>Mevcut şifrenizi yeni bir şifre ile değiştirin</div>
+                  </div>
+                </div>
+                <Link 
+                  to="/change-password"
+                  style={{
+                    marginTop: 'auto',
+                    padding: '0.8rem 1rem',
+                    backgroundColor: colors.primary,
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#7A2945';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  ŞİFREMİ DEĞİŞTİR
+                </Link>
+              </div>
+              
+              {/* Şifremi Unuttum Kartı */}
+              <div style={{
+                backgroundColor: colors.cardBgDark,
+                borderRadius: '15px',
+                padding: '1.5rem',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.03)',
+                border: `1px solid ${colors.border}`,
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 15px 35px rgba(0, 0, 0, 0.05)'
+                }
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1.2rem',
+                }}>
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    backgroundColor: colors.primaryLight,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 18H13V16H11V18ZM12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12 6C9.79 6 8 7.79 8 10H10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 12 11 11.75 11 15H13C13 12.75 16 12.5 16 10C16 7.79 14.21 6 12 6Z" fill={colors.primary}/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{
+                      color: colors.textDark,
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      marginBottom: '0.4rem'
+                    }}>Şifremi Unuttum</div>
+                    <div style={{
+                      color: colors.textLight,
+                      fontSize: '0.9rem',
+                    }}>Şifrenizi hatırlamıyorsanız sıfırlayın</div>
+                  </div>
+                </div>
+                <Link 
+                  to="/forgot-password"
+                  style={{
+                    marginTop: 'auto',
+                    padding: '0.8rem 1rem',
+                    backgroundColor: 'transparent',
+                    color: colors.primary,
+                    textDecoration: 'none',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    border: `1px solid ${colors.primary}`,
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(154, 49, 88, 0.1)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  ŞİFREMİ UNUTTUM
+                </Link>
               </div>
             </div>
             
@@ -429,15 +613,15 @@ const Profile = () => {
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 8px 20px rgba(230, 126, 34, 0.2)'
+                boxShadow: '0 8px 20px rgba(48, 10, 16, 0.2)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(230, 126, 34, 0.3)';
+                e.currentTarget.style.boxShadow = '0 12px 25px rgba(48, 10, 16, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 20px rgba(230, 126, 34, 0.2)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(48, 10, 16, 0.2)';
               }}>
                 PROFİLİ DÜZENLE
               </button>
@@ -503,7 +687,7 @@ const Profile = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
-                boxShadow: '0 8px 20px rgba(230, 126, 34, 0.2)',
+                boxShadow: '0 8px 20px rgba(48, 10, 16, 0.2)',
                 position: 'relative',
                 overflow: 'hidden'
               }}>
@@ -520,8 +704,8 @@ const Profile = () => {
                 }}></div>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: 'relative', zIndex: 1}}>
                   <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="white"/>
-                </svg>
-              </div>
+                    </svg>
+                  </div>
               <div style={{flex: 1}}>
                 <h4 style={{
                   fontSize: '1.3rem',
@@ -607,7 +791,7 @@ const Profile = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
-                boxShadow: '0 8px 20px rgba(230, 126, 34, 0.2)',
+                boxShadow: '0 8px 20px rgba(48, 10, 16, 0.2)',
                 position: 'relative',
                 overflow: 'hidden'
               }}>
@@ -624,8 +808,8 @@ const Profile = () => {
                 }}></div>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: 'relative', zIndex: 1}}>
                   <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="white"/>
-                </svg>
-              </div>
+                    </svg>
+                  </div>
               <div style={{flex: 1}}>
                 <h4 style={{
                   fontSize: '1.3rem',
@@ -657,7 +841,7 @@ const Profile = () => {
                     fontWeight: '500'
                   }}>Ankara</span>
                 </div>
-              </div>
+                      </div>
               
               {/* Sağ taraftaki fiyat bilgisi */}
               <div style={{
@@ -676,8 +860,8 @@ const Profile = () => {
                   fontSize: '0.85rem',
                   color: colors.textLight
                 }}>2 gün</div>
-              </div>
-            </div>
+                    </div>
+                  </div>
             
             {/* Yakında başlayacak kiralamalar */}
             <div style={{

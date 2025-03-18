@@ -177,3 +177,5 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 # Certifi sertifika yolunu kullan
 os.environ['SSL_CERT_FILE'] = certifi.where()
+
+FRONTEND_URL = 'http://localhost:3000'

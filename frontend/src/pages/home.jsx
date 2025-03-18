@@ -5,7 +5,7 @@ const Home = () => {
   // Stil tanımlamaları
   const styles = {
     heroContainer: {
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/images/Rolssroyce.jpg')`,
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/images/Rollsroyce.jpeg')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       minHeight: '92vh',
@@ -38,7 +38,7 @@ const Home = () => {
       marginBottom: '1rem',
       letterSpacing: '2px',
       textTransform: 'uppercase',
-      backgroundImage: 'linear-gradient(135deg, #fff, #E67E22)',
+      backgroundImage: 'linear-gradient(135deg, #fff, #6D213C)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       textShadow: '0 5px 15px rgba(0,0,0,0.2)'
@@ -48,9 +48,9 @@ const Home = () => {
       fontSize: '2.2rem',
       fontWeight: '500',
       marginTop: '0.5rem',
-      color: '#E67E22',
+      color: '#6D213C',
       letterSpacing: '1px',
-      WebkitTextFillColor: '#E67E22'
+      WebkitTextFillColor: '#6D213C'
     },
     subtitle: {
       fontSize: '1.8rem',
@@ -61,15 +61,15 @@ const Home = () => {
     },
     badge: {
       display: 'inline-block',
-      background: 'linear-gradient(135deg, rgba(230, 126, 34, 0.2) 0%, rgba(230, 126, 34, 0.3) 100%)',
-      color: '#E67E22',
+      background: 'linear-gradient(135deg, rgba(109, 33, 60, 0.2) 0%, rgba(48, 10, 16, 0.3) 100%)',
+      color: '#6D213C',
       padding: '0.9rem 2.2rem',
       borderRadius: '50px',
       fontSize: '1.1rem',
       fontWeight: '600',
-      border: '1px solid rgba(230, 126, 34, 0.5)',
+      border: '1px solid rgba(109, 33, 60, 0.5)',
       marginTop: '1.5rem',
-      boxShadow: '0 5px 15px rgba(230, 126, 34, 0.15)',
+      boxShadow: '0 5px 15px rgba(48, 10, 16, 0.15)',
       transition: 'all 0.3s ease',
       animation: 'pulse 2s infinite'
     },
@@ -81,7 +81,7 @@ const Home = () => {
       flexWrap: 'wrap'
     },
     primaryBtn: {
-      backgroundColor: '#E67E22',
+      backgroundColor: '#800020',
       color: '#fff',
       padding: '1.2rem 2.5rem',
       borderRadius: '50px',
@@ -91,14 +91,14 @@ const Home = () => {
       textTransform: 'uppercase',
       letterSpacing: '1px',
       border: 'none',
-      boxShadow: '0 8px 25px rgba(230, 126, 34, 0.35)',
+      boxShadow: '0 8px 25px rgba(128, 0, 32, 0.35)',
       transition: 'all 0.3s ease',
       position: 'relative',
       overflow: 'hidden',
       zIndex: 1,
       '&:hover': {
         transform: 'translateY(-5px)',
-        boxShadow: '0 12px 30px rgba(230, 126, 34, 0.5)'
+        boxShadow: '0 12px 30px rgba(128, 0, 32, 0.5)'
       },
       '&:before': {
         content: '""',
@@ -165,8 +165,8 @@ const Home = () => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50%',
-      backgroundColor: 'rgba(230, 126, 34, 0.1)',
-      color: '#E67E22'
+      backgroundColor: 'rgba(109, 33, 60, 0.1)',
+      color: '#6D213C'
     },
     featureTitle: {
       fontSize: '1.6rem',
@@ -183,7 +183,7 @@ const Home = () => {
         transform: 'translateX(-50%)',
         width: '40px',
         height: '3px',
-        backgroundColor: '#E67E22',
+        backgroundColor: '#6D213C',
         borderRadius: '2px'
       }
     },
@@ -195,7 +195,7 @@ const Home = () => {
     },
     closingSection: {
       padding: '8rem 2rem',
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/Rolssroyce.jpg')`,
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/Rollsroyce.jpeg')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed',
@@ -218,7 +218,7 @@ const Home = () => {
         width: '80px',
         height: '4px',
         borderRadius: '2px',
-        backgroundColor: '#E67E22'
+        backgroundColor: '#6D213C'
       }
     },
     bigTitle: {
@@ -263,16 +263,17 @@ const Home = () => {
               transform: 'translateY(0)',
               ':hover': {
                 transform: 'translateY(-5px)',
-                boxShadow: '0 12px 30px rgba(230, 126, 34, 0.5)'
-              }
+                boxShadow: '0 12px 30px rgba(128, 0, 32, 0.5)'
+              },
+              background: 'linear-gradient(135deg, #6D213C, #300A10)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(230, 126, 34, 0.5)';
+              e.currentTarget.style.boxShadow = '0 12px 30px rgba(128, 0, 32, 0.5)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(230, 126, 34, 0.35)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(128, 0, 32, 0.35)';
             }}>
               Hemen Üye Ol
             </Link>
@@ -284,7 +285,7 @@ const Home = () => {
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-5px)';
               e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.boxShadow = '0 12px 25px rgba(0, 0, 0, 0.25)';
+              e.currentTarget.style.boxShadow = '0 12px 25px rgba(0, 0, 0, 0.25)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)';
@@ -315,7 +316,7 @@ const Home = () => {
             transform: 'translateX(-50%)',
             width: '80px',
             height: '4px',
-            backgroundColor: '#E67E22',
+            backgroundColor: '#6D213C',
             borderRadius: '2px'
           }}></span>
         </h2>
@@ -370,7 +371,10 @@ const Home = () => {
       </div>
 
       {/* Kapanış CTA Bölümü */}
-      <div style={styles.closingSection}>
+      <div style={{
+        ...styles.closingSection,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/Rollsroyce.jpeg')`
+      }}>
         <h2 style={styles.bigTitle}>
           Lüks Araç Kiralama Deneyimi İçin
         </h2>
@@ -388,18 +392,18 @@ const Home = () => {
           ...styles.primaryBtn,
           padding: '1.3rem 3.5rem',
           fontSize: '1.2rem',
-          boxShadow: '0 10px 30px rgba(230, 126, 34, 0.5)',
+          boxShadow: '0 10px 30px rgba(128, 0, 32, 0.5)',
           transition: 'all 0.4s ease',
-          background: 'linear-gradient(135deg, #E67E22, #f39c12)',
+          background: 'linear-gradient(135deg, #6D213C, #300A10)',
           transform: 'translateY(0)'
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-          e.currentTarget.style.boxShadow = '0 15px 35px rgba(230, 126, 34, 0.6)';
+          e.currentTarget.style.boxShadow = '0 15px 35px rgba(128, 0, 32, 0.6)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0) scale(1)';
-          e.currentTarget.style.boxShadow = '0 10px 30px rgba(230, 126, 34, 0.5)';
+          e.currentTarget.style.boxShadow = '0 10px 30px rgba(128, 0, 32, 0.5)';
         }}>
           Hemen Kayıt Ol
         </Link>

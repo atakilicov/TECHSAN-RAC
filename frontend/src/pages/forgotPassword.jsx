@@ -25,65 +25,130 @@ const ForgotPassword = () => {
   };
   
   return (
-    <div className="course-register-container">
-      <div className="course-register-left">
-        <div className="gradient-overlay"></div>
-        <div className="register-info">
-          <div className="graduation-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="#FFFFFF"/>
-            </svg>
+    <div className="auth-container" style={{
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("/images/Rollsroyce.jpeg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: '#000',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '0 5%'
+    }}>
+      <div className="auth-card" style={{
+        backgroundColor: 'rgba(10, 10, 10, 0.3)',
+        backdropFilter: 'blur(15px)',
+        WebkitBackdropFilter: 'blur(15px)',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderTop: 'none',
+        borderRadius: '10px',
+        maxWidth: '360px',
+        padding: '35px 30px',
+        width: '100%',
+        transition: 'all 0.3s ease'
+      }}>
+        <h2 style={{ 
+          margin: '0 0 1.5rem 0', 
+          textAlign: 'center',
+          fontSize: '1.8rem',
+          fontWeight: '600',
+          color: '#6D213C',
+          letterSpacing: '0.5px'
+        }}>Şifremi Unuttum</h2>
+        
+        <p style={{
+          color: '#fff',
+          textAlign: 'center',
+          marginBottom: '1.2rem',
+          fontSize: '0.95rem'
+        }}>
+          E-posta adresinizi girin, size şifre sıfırlama bağlantısı göndereceğiz.
+        </p>
+        
+        {message && <div className="alert" style={{
+          backgroundColor: 'rgba(202, 43, 43, 0.2)',
+          color: '#ff8a8a',
+          border: '1px solid rgba(202, 43, 43, 0.3)',
+          padding: '0.8rem',
+          borderRadius: '10px',
+          fontSize: '0.9rem',
+          marginBottom: '1.2rem',
+          fontWeight: '500'
+        }}>{message}</div>}
+        
+        {error && <div className="alert" style={{
+          backgroundColor: 'rgba(202, 43, 43, 0.2)',
+          color: '#ff8a8a',
+          border: '1px solid rgba(202, 43, 43, 0.3)',
+          padding: '0.8rem',
+          borderRadius: '10px',
+          fontSize: '0.9rem',
+          marginBottom: '1.2rem',
+          fontWeight: '500'
+        }}>{error}</div>}
+        
+        <form onSubmit={handleSubmit}>
+          <div className="form-group" style={{ marginBottom: '1.2rem' }}>
+            <input
+              type="email"
+              placeholder="E-posta"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+                fontWeight: '400',
+                letterSpacing: '0.3px',
+              }}
+            />
           </div>
-          <h2>ŞİFRENİZİ Mİ UNUTTUNUZ?</h2>
-          <p>Endişelenmeyin! E-posta adresinizi girin ve şifre sıfırlama bağlantısını hemen göndereceğiz.</p>
-          <div className="register-buttons">
-            <button className="register-btn-outline">Yardım Al</button>
-            <button className="register-btn-primary">Giriş Sayfasına Dön</button>
-          </div>
-        </div>
-      </div>
-      
-      <div className="course-register-right">
-        <div className="register-form">
-          <div className="register-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15.1 8H8.9V6C8.9 4.29 10.29 2.9 12 2.9C13.71 2.9 15.1 4.29 15.1 6V8Z" fill="#7D5A3C"/>
-            </svg>
-          </div>
-          <h3>ŞİFREMİ UNUTTUM</h3>
           
-          {message && <div className="register-alert-success">{message}</div>}
-          {error && <div className="register-alert-error">{error}</div>}
-          
-          <p className="register-form-description">
-            Lütfen hesabınızla ilişkili e-posta adresinizi girin, şifre sıfırlama bağlantısını göndereceğiz.
+          <button 
+            type="submit" 
+            className="btn"
+            disabled={loading}
+            style={{
+              background: loading ? 'rgba(48, 10, 16, 0.6)' : 'linear-gradient(135deg, #6D213C, #300A10)',
+              color: '#fff',
+              height: '48px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              letterSpacing: '0.5px',
+              boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)'
+            }}
+          >
+            {loading ? "GÖNDERİLİYOR..." : "ŞIFRE SIFIRLAMA BAĞLANTISI GÖNDER"}
+          </button>
+        </form>
+
+        <div style={{ 
+          marginTop: '1.4rem', 
+          textAlign: 'center', 
+          fontSize: '0.95rem',
+          color: '#fff'
+        }}>
+          <p>
+            <Link to="/login" style={{ color: '#9A3158', fontWeight: '500', textDecoration: 'none' }}>Giriş Sayfası</Link>
           </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="register-form-group">
-              <input
-                type="email"
-                placeholder="E-posta"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              className="register-btn-submit"
-              disabled={loading}
-            >
-              {loading ? "GÖNDERİLİYOR..." : "RESET LİNKİ GÖNDER"}
-            </button>
-          </form>
-
-          <div className="register-auth-links">
-            <p>
-              <Link to="/login">Giriş sayfasına dön</Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

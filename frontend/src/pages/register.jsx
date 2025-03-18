@@ -128,7 +128,7 @@ const Register = () => {
 
   return (
     <div className="auth-container" style={{
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("/images/Rolssroyce.jpg")',
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("/images/Rollsroyce.jpeg")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -139,9 +139,8 @@ const Register = () => {
       bottom: 0,
       backgroundColor: '#000',
       display: 'flex',
-      justifyContent: 'flex-end',
+      justifyContent: 'center',
       alignItems: 'center',
-      paddingRight: '5%',
       fontFamily: '"Poppins", "Segoe UI", Roboto, sans-serif'
     }}>
       <div className="auth-card" style={{
@@ -162,7 +161,7 @@ const Register = () => {
           textAlign: 'center',
           fontSize: '1.8rem',
           fontWeight: '600',
-          color: '#E67E22', // Turuncu tonu
+          color: '#6D213C', /* Açık bordo tonu */
           letterSpacing: '0.5px'
         }}>HESAP OLUŞTUR</h2>
         
@@ -415,7 +414,7 @@ const Register = () => {
             type="submit" 
             disabled={loading || !termsAccepted}
             style={{
-              backgroundColor: loading || !termsAccepted ? 'rgba(230, 126, 34, 0.6)' : '#E67E22', // Turuncu ton
+              background: loading || !termsAccepted ? 'rgba(48, 10, 16, 0.6)' : 'linear-gradient(135deg, #6D213C, #300A10)', /* Açık bordo -> koyu bordo gradyan */
               color: '#fff',
               height: '48px',
               fontSize: '1rem',
@@ -426,7 +425,7 @@ const Register = () => {
               borderRadius: '10px',
               cursor: loading || !termsAccepted ? 'not-allowed' : 'pointer',
               letterSpacing: '0.5px',
-              boxShadow: '0 2px 10px rgba(230, 126, 34, 0.3)' // Turuncu ton
+              boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)' 
             }}
           >
             {loading ? "İŞLEM YAPILIYOR..." : "KAYIT OL"}
@@ -439,7 +438,7 @@ const Register = () => {
           fontSize: '0.95rem',
           color: '#fff'
         }}>
-          <p>Zaten hesabınız var mı? <Link to="/login" style={{ color: '#F39C12', fontWeight: '600', textDecoration: 'none' }}>Giriş Yap</Link></p>
+          <p>Zaten hesabınız var mı? <Link to="/login" style={{ color: '#9A3158', fontWeight: '600', textDecoration: 'none' }}>Giriş Yap</Link></p>
         </div>
       </div>
     </div>
