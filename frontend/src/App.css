@@ -1,38 +1,475 @@
-.App {
+/* Temel sayfa düzeni */
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+  background-color: #000; /* Arka plan rengini siyah yapıyoruz */
+}
+
+/* Navbar stilleri */
+.navbar-container {
+  position: fixed; /* fixed yaparak her zaman üstte kalmasını sağlıyoruz */
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.modern-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 4rem; /* Padding'i artırıyoruz */
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.95); /* Arka plan rengini daha koyu yapıyoruz */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.02);
+}
+
+.nav-logo img {
+  height: 50px; /* Logo boyutunu artırıyoruz */
+  width: auto;
+}
+
+.nav-logo h1 {
+  font-size: 1.8rem; /* Başlık boyutunu artırıyoruz */
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.nav-links a i {
+  font-size: 1.1rem;
+}
+
+.nav-links a:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-links .register-btn {
+  background: linear-gradient(135deg, #6D213C, #300A10);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(48, 10, 16, 0.3);
+}
+
+.nav-links .register-btn:hover {
+  background: linear-gradient(135deg, #7A2945, #3C0D16);
+  border: 1px solid transparent;
+  box-shadow: 0 6px 18px rgba(48, 10, 16, 0.4);
+}
+
+.nav-links .logout-btn {
+  background-color: rgba(48, 10, 16, 0.2);
+  color: #F8BED0;
+  border: 1px solid rgba(48, 10, 16, 0.3);
+}
+
+.nav-links .logout-btn:hover {
+  background-color: rgba(48, 10, 16, 0.3);
+}
+
+/* Ana içerik stilleri */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 90px; /* Navbar'ın yeni yüksekliğine göre ayarlıyoruz */
+}
+
+/* Form elemanları renkleri */
+::placeholder {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
+:-ms-input-placeholder, 
+::-ms-input-placeholder {
+  color: #ffffff !important;
+}
+
+/* Select ve option elementleri */
+select {
+  color: #ffffff !important;
+}
+
+option {
+  color: #ffffff;
+  background-color: #222;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .modern-navbar {
+    padding: 1rem 2rem;
+  }
+  
+  .nav-logo img {
+    height: 40px;
+  }
+  
+  .nav-logo h1 {
+    font-size: 1.4rem;
+  }
+  
+  .nav-links {
+    margin-top: 0.8rem;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .nav-links a {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Ana Sayfa Stilleri */
+.home-page {
+  width: 100%;
+}
+
+/* Hero Bölümü */
+.hero-container {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/public/images/Rolssroyce.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 2rem;
+  position: relative;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: rgba(10, 10, 10, 0.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.main-title {
+  font-size: 3.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.main-title span {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  color: #E67E22;
+}
+
+.hero-subtitle {
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tagline {
+  margin: 2rem 0;
+}
+
+.tagline p {
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.status-badge {
+  display: inline-block;
+  background-color: rgba(230, 126, 34, 0.2);
+  color: #E67E22;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: 1px solid rgba(230, 126, 34, 0.5);
+  margin-top: 1rem;
+}
+
+/* CTA Butonları */
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.cta-button {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cta-button.primary {
+  background: linear-gradient(135deg, #6D213C, #300A10);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(48, 10, 16, 0.3);
+}
+
+.cta-button.secondary {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cta-button.primary:hover {
+  background: linear-gradient(135deg, #7A2945, #3C0D16);
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(48, 10, 16, 0.4);
+}
+
+.cta-button.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+.cta-button.large {
+  padding: 1.2rem 3rem;
+  font-size: 1.2rem;
+}
+
+/* Özellikler Bölümü */
+.features-section {
+  padding: 5rem 2rem;
+  background-color: #f9f9f9;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.section-title p {
+  font-size: 1.2rem;
+  color: #777;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Markalar Bölümü */
+.brands-section {
+  padding: 5rem 2rem;
+  background-color: #fff;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.brands-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 3rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.brand-logos {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 3rem;
+  margin: 0 auto;
+  max-width: 1000px;
 }
 
-.App-link {
-  color: #61dafb;
+.brand {
+  flex: 0 0 auto;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #555;
+  padding: 1rem 2rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.brand:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  color: #6D213C;
+}
+
+/* Kapanış CTA Bölümü */
+.closing-cta {
+  padding: 6rem 2rem;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/public/images/Rolssroyce.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  text-align: center;
+  color: #fff;
+}
+
+.closing-cta h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.closing-cta p {
+  font-size: 1.3rem;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive Ayarlar */
+@media (max-width: 768px) {
+  .hero-content {
+    padding: 2rem;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .main-title {
+    font-size: 2.5rem;
+  }
+  
+  .main-title span {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.4rem;
+  }
+  
+  .tagline p {
+    font-size: 1.2rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .feature-cards {
+    gap: 1.5rem;
+  }
+  
+  .feature-card {
+    min-width: 100%;
+  }
+  
+  .section-title h2,
+  .brands-section h2,
+  .closing-cta h2 {
+    font-size: 2rem;
+  }
+  
+  .brand-logos {
+    gap: 1rem;
+  }
+  
+  .brand {
+    width: calc(50% - 1rem);
+    font-size: 1.1rem;
   }
 }

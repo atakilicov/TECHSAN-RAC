@@ -152,6 +152,58 @@ export const forgotPassword = async (email) => {
   }
 };
 
+/**
+ * Şifre Sıfırlama Onay Fonksiyonu
+ * 
+ * @param {string} uid - Kullanıcı ID'si (base64 kodlanmış)
+ * @param {string} token - Şifre sıfırlama token'ı
+ * @param {string} newPassword - Kullanıcının yeni şifresi
+ * @param {string} confirmPassword - Kullanıcının tekrar girdiği şifre
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, kullanıcının şifresini sıfırlamak için kullanılır.
+ * E-posta ile gelen token ve yeni şifre ile şifre sıfırlama işlemi gerçekleştirilir.
+ */
+export const resetPasswordConfirm = async (uid, token, newPassword, confirmPassword) => {
+  try {
+    // Backend'e POST isteği gönder
+    const response = await api.post('reset-password/', { 
+      uid,
+      token, 
+      new_password: newPassword,
+      confirm_password: confirmPassword
+    });
+    return response.data;
+  } catch (error) {
+    // Hata durumunda, API'den gelen hata mesajını veya genel hata mesajını fırlat
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Şifre Değiştirme Fonksiyonu
+ * 
+ * @param {string} currentPassword - Kullanıcının mevcut şifresi
+ * @param {string} newPassword - Kullanıcının yeni şifresi
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, kullanıcının şifresini değiştirmek için kullanılır.
+ * Mevcut şifre doğrulandıktan sonra yeni şifre kaydedilir.
+ */
+export const changePassword = async (currentPassword, newPassword) => {
+  try {
+    // Backend'e POST isteği gönder
+    const response = await api.post('change-password/', { 
+      current_password: currentPassword,
+      new_password: newPassword
+    });
+    return response.data;
+  } catch (error) {
+    // Hata durumunda, API'den gelen hata mesajını veya genel hata mesajını fırlat
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 // --------------------
 // Yardımcı Fonksiyonlar
 // --------------------
@@ -207,6 +259,41 @@ export const testBackendConnection = async () => {
       message: 'Backend bağlantısı başarısız!',
       error: error.message
     };
+  }
+};
+
+/**
+ * Şehirler Listesini Getir
+ * 
+ * @returns {Promise} - API'den dönen şehirler listesi
+ * 
+ * Bu fonksiyon, backend'den Türkiye'deki şehirlerin listesini getirir.
+ * Kayıt formunda ve kullanıcı profilinde şehir seçimi için kullanılır.
+ */
+export const getCities = async () => {
+  try {
+    const response = await api.get('cities/');
+    return response.data;
+  } catch (error) {
+    console.error("Şehirler listesi alınamadı:", error);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Kullanıcı Profili Güncelleme Fonksiyonu
+ * 
+ * @param {Object} userData - Güncellenecek kullanıcı bilgileri
+ * @returns {Promise} - API'den dönen yanıt
+ */
+export const updateUserProfile = async (userData) => {
+  try {
+    // API isteği
+    const response = await api.put('/users/profile', userData);
+    return response.data;
+  } catch (error) {
+    console.error("Profil güncelleme hatası:", error);
+    throw error.response?.data || { error: "Profil güncellenemedi" };
   }
 };
 

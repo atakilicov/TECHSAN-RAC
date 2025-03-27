@@ -1,0 +1,115 @@
+/* Temel Container */
+.auth-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Sağ tarafta olmalı */
+  padding: 0 5% 0 0; /* Right için padding */
+  margin: 0;
+  position: relative;
+  /* Resim yolunu düzeltiyoruz */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/public/images/Rolssroyce.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Temel Card */
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(10, 10, 10, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Form Elementleri */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  flex: 1;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Buton */
+.btn {
+  width: 100%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6D213C, #300A10); /* Açık bordo -> koyu bordo gradyan */
+  color: #fff;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #7A2945, #3C0D16); /* Daha canlı gradyan */
+  box-shadow: 0 4px 15px rgba(48, 10, 16, 0.4);
+}
+
+/* Alert */
+.alert {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background-color: rgba(45, 133, 64, 0.2);
+  color: #7aff9e;
+  border: 1px solid rgba(45, 133, 64, 0.3);
+}
+
+.alert-error {
+  background-color: rgba(202, 43, 43, 0.2);
+  color: #ff8a8a;
+  border: 1px solid rgba(202, 43, 43, 0.3);
+}
+
+/* Form başlıkları */
+.auth-title {
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #6D213C; /* Daha açık bordo tonu */
+  letter-spacing: 0.5px;
+}
+
+/* Link stilleri */
+.auth-links {
+  margin-top: 1.4rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.auth-links a {
+  color: #9A3158; /* Daha açık, canlı bordo */
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  color: #B63A69; /* Hover durumunda daha açık ton */
+} 
