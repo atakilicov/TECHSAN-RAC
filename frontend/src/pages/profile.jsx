@@ -3,6 +3,10 @@ import { AuthContext } from "../context/AuthContext";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+
+
+//merhaba berk test
+
 const Profile = () => {
   const { user, setUser } = useContext(AuthContext);
   const [message, setMessage] = useState("");
