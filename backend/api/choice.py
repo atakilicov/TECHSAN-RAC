@@ -83,3 +83,15 @@ class CustomUserChoices():
         ('osmaniye', 'Osmaniye'),
         ('duzce', 'Düzce'),
     ]
+    
+    # Kullanıcı rolleri
+    USER_ROLES = [
+        ('admin', 'Admin'),
+        ('end_user', 'End User'),
+    ]
+    
+    # Kullanıcı cinsiyeti
+    GENDER_CHOICES = [
+        ('male', 'Erkek'),
+        ('female', 'Kadın'),
+    ]

@@ -1,8 +1,6 @@
 import axios from 'axios';
 
 // API'nin temel URL'i - Backend sunucusunun adresi
-// Bu URL, Django backend'in çalıştığı adresi gösterir
-// Canlı ortama geçildiğinde bu adres değiştirilmelidir
 const API_URL = 'http://127.0.0.1:8000/api/';
 
 // Axios instance oluşturma
@@ -193,13 +191,40 @@ export const resetPasswordConfirm = async (uid, token, newPassword, confirmPassw
 export const changePassword = async (currentPassword, newPassword) => {
   try {
     // Backend'e POST isteği gönder
-    const response = await api.post('change-password/', { 
+    const response = await api.post('users/change-password/', { 
       current_password: currentPassword,
       new_password: newPassword
     });
     return response.data;
   } catch (error) {
     // Hata durumunda, API'den gelen hata mesajını veya genel hata mesajını fırlat
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Kullanıcı Hesabı Silme Fonksiyonu
+ * 
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, kullanıcının hesabını kalıcı olarak silmek için kullanılır.
+ * İşlem başarılı olursa kullanıcı çıkış yapılır ve localStorage temizlenir.
+ */
+export const deleteAccount = async () => {
+  try {
+    // Backend'e DELETE isteği gönder
+    const response = await api.delete('users/delete-account/');
+    
+    // Local storage'dan token'ları ve kullanıcı bilgilerini temizle
+    // Bu işlem, kullanıcı oturumunu sonlandırmak için gereklidir
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    
+    // API yanıtını döndür
+    return response.data;
+  } catch (error) {
+    // Hatayı fırlat
     throw error.response ? error.response.data : error.message;
   }
 };

@@ -7,17 +7,19 @@ import axios from 'axios';
 
 const Register = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
-  const [password2, setPassword2] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const [birthCountry, setBirthCountry] = useState("");
+  const [gender, setGender] = useState("");
   const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [cities, setCities] = useState([]);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -42,12 +44,6 @@ const Register = () => {
     setMessage("");
     setLoading(true);
 
-    if (password !== password2) {
-      setMessage("Şifreler eşleşmiyor!");
-      setLoading(false);
-      return;
-    }
-
     if (!termsAccepted) {
       setMessage("Kullanım koşullarını kabul etmelisiniz.");
       setLoading(false);
@@ -59,17 +55,17 @@ const Register = () => {
       last_name: lastName,
       phone: phone,
       email: email,
-      password: password,
-      password2: password2,
       birth_date: birthDate,
-      city: city
+      birth_country: birthCountry,
+      gender: gender,
+      city: city,
+      address: address
     };
 
     try {
-      await register(userData);
-      setMessage("Kayıt başarılı! Giriş yapılıyor...");
-      await login(email, password);
-      navigate("/profile");
+      const response = await register(userData);
+      setRegistrationSuccess(true);
+      setMessage(response.message || "Kayıt başarılı! Lütfen e-posta adresinize gönderilen bağlantı ile şifrenizi oluşturun.");
     } catch (error) {
       console.error("Register error:", error);
       
@@ -85,9 +81,6 @@ const Register = () => {
         if (error.email) {
           errorMessage += `E-posta: ${Array.isArray(error.email) ? error.email.join(', ') : error.email}\n`;
         }
-        if (error.password) {
-          errorMessage += `Şifre: ${Array.isArray(error.password) ? error.password.join(', ') : error.password}\n`;
-        }
         if (error.first_name) {
           errorMessage += `Ad: ${Array.isArray(error.first_name) ? error.first_name.join(', ') : error.first_name}\n`;
         }
@@ -99,6 +92,12 @@ const Register = () => {
         }
         if (error.birth_date) {
           errorMessage += `Doğum tarihi: ${Array.isArray(error.birth_date) ? error.birth_date.join(', ') : error.birth_date}\n`;
+        }
+        if (error.birth_country) {
+          errorMessage += `Doğum ülkesi: ${Array.isArray(error.birth_country) ? error.birth_country.join(', ') : error.birth_country}\n`;
+        }
+        if (error.gender) {
+          errorMessage += `Cinsiyet: ${Array.isArray(error.gender) ? error.gender.join(', ') : error.gender}\n`;
         }
         
         // Diğer spesifik alanları ekleyebilirsiniz
@@ -127,25 +126,343 @@ const Register = () => {
     }
   };
 
-  // Profil güncelleme API isteği
-  const updateProfile = async (userData) => {
-    try {
-      // API URL'ini ayarla
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-      
-      // Backend'e istek gönder
-      const response = await axios.put(`${apiUrl}/users/profile/`, userData, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      return response.data;
-    } catch (error) {
-      console.error("Profil güncellenirken hata:", error);
-      throw error.response?.data || { error: "Profil güncellenemedi" };
-    }
+  // Başarılı kayıt mesajı
+  const renderSuccessMessage = () => {
+    return (
+      <div style={{
+        backgroundColor: 'rgba(45, 133, 64, 0.1)',
+        border: '1px solid rgba(45, 133, 64, 0.3)',
+        padding: '2rem',
+        borderRadius: '10px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          width: '60px',
+          height: '60px',
+          backgroundColor: 'rgba(45, 133, 64, 0.2)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 1.5rem'
+        }}>
+          <span style={{ fontSize: '2rem', color: '#2d8540' }}>✓</span>
+        </div>
+        
+        <h3 style={{ color: '#2d8540', marginBottom: '1rem' }}>Kayıt Başarılı!</h3>
+        
+        <p style={{ 
+          marginBottom: '1.5rem',
+          color: '#fff',
+          fontSize: '0.95rem',
+          lineHeight: '1.5'
+        }}>
+          {message || "Lütfen e-posta adresinize gönderilen bağlantıya tıklayarak şifrenizi oluşturun."}
+        </p>
+        
+        <Link to="/login" style={{
+          display: 'inline-block',
+          backgroundColor: '#2d8540',
+          color: '#fff',
+          padding: '0.8rem 1.5rem',
+          borderRadius: '10px',
+          textDecoration: 'none',
+          fontWeight: '600',
+          fontSize: '0.95rem'
+        }}>
+          Giriş Sayfasına Dön
+        </Link>
+      </div>
+    );
+  };
+
+  // Kayıt Formu
+  const renderRegisterForm = () => {
+    return (
+      <>
+        <h2 style={{ 
+          margin: '0 0 1.5rem 0', 
+          textAlign: 'center',
+          fontSize: '1.8rem',
+          fontWeight: '600',
+          color: '#6D213C', /* Açık bordo tonu */
+          letterSpacing: '0.5px'
+        }}>HESAP OLUŞTUR</h2>
+        
+        {message && !registrationSuccess && (
+          <div className="alert" style={{
+            backgroundColor: 'rgba(202, 43, 43, 0.2)',
+            color: '#ff8a8a',
+            border: '1px solid rgba(202, 43, 43, 0.3)',
+            padding: '0.8rem',
+            borderRadius: '10px',
+            fontSize: '0.9rem',
+            marginBottom: '1.2rem',
+            fontWeight: '500',
+            whiteSpace: 'pre-line'
+          }}>
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {/* Ad Soyad alanları */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '0.8rem' }}>
+            <div style={{ flex: 1 }}>
+              <input
+                type="text"
+                placeholder="Ad*"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  height: '48px',
+                  width: '100%',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '1rem',
+                  color: '#fff',
+                }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <input
+                type="text"
+                placeholder="Soyad*"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  height: '48px',
+                  width: '100%',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '1rem',
+                  color: '#fff',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Email alanı */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <input
+              type="email"
+              placeholder="E-posta*"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            />
+          </div>
+
+          {/* Telefon alanı */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <input
+              type="tel"
+              placeholder="Telefon*"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            />
+          </div>
+
+          {/* Doğum Tarihi alanı */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <input
+              type="date"
+              placeholder="Doğum Tarihi*"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            />
+          </div>
+
+          {/* Doğum Ülkesi alanı */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <input
+              type="text"
+              placeholder="Doğum Ülkesi*"
+              value={birthCountry}
+              onChange={(e) => setBirthCountry(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            />
+          </div>
+
+          {/* Cinsiyet seçimi */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+                appearance: 'none'
+              }}
+            >
+              <option value="" disabled selected>Cinsiyet Seçin*</option>
+              <option value="male">Erkek</option>
+              <option value="female">Kadın</option>
+              <option value="other">Diğer</option>
+            </select>
+          </div>
+
+          {/* Şehir seçimi */}
+          <div style={{ marginBottom: '0.8rem' }}>
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              required
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                height: '48px',
+                width: '100%',
+                padding: '0.5rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+                appearance: 'none'
+              }}
+            >
+              <option value="" disabled selected>Şehir Seçin*</option>
+              {cities.map((city) => (
+                <option key={city.value} value={city.value}>{city.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Adres alanı */}
+          <div style={{ marginBottom: '1rem' }}>
+            <textarea
+              placeholder="Adres (İsteğe bağlı)"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                minHeight: '80px',
+                width: '100%',
+                padding: '0.8rem 1rem',
+                borderRadius: '10px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                fontSize: '1rem',
+                color: '#fff',
+                resize: 'vertical'
+              }}
+            />
+          </div>
+          
+          {/* Kullanım koşulları onayı */}
+          <div style={{ 
+            marginBottom: '1.5rem', 
+            display: 'flex', 
+            alignItems: 'flex-start',
+            gap: '10px'
+          }}>
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              style={{
+                marginTop: '5px'
+              }}
+            />
+            <label htmlFor="terms" style={{ 
+              fontSize: '0.9rem',
+              color: '#fff',
+              fontWeight: '400',
+              lineHeight: '1.4'
+            }}>
+              Kişisel verilerimin işlenmesine ilişkin <a href="#" style={{ color: '#9A3158', textDecoration: 'none' }}>Aydınlatma Metni</a>'ni okudum, anladım ve kabul ediyorum.*
+            </label>
+          </div>
+
+          <button 
+            type="submit" 
+            className="submit-btn"
+            disabled={loading}
+            style={{
+              background: loading ? 'rgba(48, 10, 16, 0.6)' : 'linear-gradient(135deg, #6D213C, #300A10)',
+              color: '#fff',
+              height: '48px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              letterSpacing: '0.5px',
+              boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)'
+            }}
+          >
+            {loading ? "KAYIT YAPILIYOR..." : "HESAP OLUŞTUR"}
+          </button>
+        </form>
+
+        <div style={{ 
+          marginTop: '1.2rem', 
+          textAlign: 'center',
+          fontSize: '0.95rem',
+          color: '#fff'
+        }}>
+          <p>
+            Zaten bir hesabınız var mı? <Link to="/login" style={{ color: '#9A3158', fontWeight: '600', textDecoration: 'none' }}>Giriş Yap</Link>
+          </p>
+        </div>
+      </>
+    );
   };
 
   return (
@@ -178,290 +495,7 @@ const Register = () => {
         width: '100%',
         transition: 'all 0.3s ease'
       }}>
-        <h2 style={{ 
-          margin: '0 0 1.5rem 0', 
-          textAlign: 'center',
-          fontSize: '1.8rem',
-          fontWeight: '600',
-          color: '#6D213C', /* Açık bordo tonu */
-          letterSpacing: '0.5px'
-        }}>HESAP OLUŞTUR</h2>
-        
-        {message && (
-          <div className="alert" style={{
-            backgroundColor: message.includes("başarılı") ? 'rgba(45, 133, 64, 0.2)' : 'rgba(202, 43, 43, 0.2)',
-            color: message.includes("başarılı") ? '#7aff9e' : '#ff8a8a',
-            border: `1px solid ${message.includes("başarılı") ? 'rgba(45, 133, 64, 0.3)' : 'rgba(202, 43, 43, 0.3)'}`,
-            padding: '0.8rem',
-            borderRadius: '10px',
-            fontSize: '0.9rem',
-            marginBottom: '1.2rem',
-            fontWeight: '500',
-            whiteSpace: 'pre-line'
-          }}>
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ 
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '1rem'
-          }}>
-            <div style={{ flex: 1 }}>
-              <input
-                type="text"
-                placeholder="Adınız"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff',
-                }}
-              />
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <input
-                type="text"
-                placeholder="Soyadınız"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff',
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <input
-              type="email"
-              placeholder="E-posta"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                height: '48px',
-                width: '100%',
-                padding: '0.5rem 1rem',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                fontSize: '1rem',
-                color: '#fff',
-                fontWeight: '400',
-                letterSpacing: '0.3px',
-                caretColor: '#fff',
-              }}
-            />
-          </div>
-
-          <div style={{ 
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '1rem'
-          }}>
-            <div style={{ flex: 1 }}>
-              <input
-                type="tel"
-                placeholder="Telefon Numarası"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff',
-                }}
-              />
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <input
-                type="date"
-                value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff'
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                height: '48px',
-                width: '100%',
-                padding: '0.5rem 1rem',
-                borderRadius: '10px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                fontSize: '1rem',
-                color: city ? '#fff' : '#fff',
-                fontWeight: '400',
-                appearance: 'none',
-                letterSpacing: '0.3px'
-              }}
-            >
-              <option value="" style={{backgroundColor: '#222', color: '#fff'}}>Şehir Seçiniz</option>
-              {cities.map((cityItem) => (
-                <option 
-                  key={cityItem.value} 
-                  value={cityItem.value} 
-                  style={{backgroundColor: '#222', color: '#fff'}}
-                >
-                  {cityItem.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ 
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '1rem'
-          }}>
-            <div style={{ flex: 1 }}>
-              <input
-                type="password"
-                placeholder="Şifre"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff',
-                }}
-              />
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <input
-                type="password"
-                placeholder="Şifre tekrarı"
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
-                required
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  height: '48px',
-                  width: '100%',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '1rem',
-                  color: '#fff',
-                  fontWeight: '400',
-                  letterSpacing: '0.3px',
-                  caretColor: '#fff',
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem', 
-            marginBottom: '1.2rem' 
-          }}>
-            <input
-              type="checkbox"
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-              id="terms"
-              style={{ width: '18px', height: '18px' }}
-            />
-            <label htmlFor="terms" style={{ fontSize: '0.95rem', color: '#fff', fontWeight: '400' }}>
-              Kullanım koşullarını kabul ediyorum
-            </label>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={loading || !termsAccepted}
-            style={{
-              background: loading || !termsAccepted ? 'rgba(48, 10, 16, 0.6)' : 'linear-gradient(135deg, #6D213C, #300A10)', /* Açık bordo -> koyu bordo gradyan */
-              color: '#fff',
-              height: '48px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.3s ease',
-              width: '100%',
-              border: 'none',
-              borderRadius: '10px',
-              cursor: loading || !termsAccepted ? 'not-allowed' : 'pointer',
-              letterSpacing: '0.5px',
-              boxShadow: '0 2px 10px rgba(48, 10, 16, 0.3)' 
-            }}
-          >
-            {loading ? "İŞLEM YAPILIYOR..." : "KAYIT OL"}
-          </button>
-        </form>
-
-        <div style={{ 
-          marginTop: '1.4rem', 
-          textAlign: 'center', 
-          fontSize: '0.95rem',
-          color: '#fff'
-        }}>
-          <p>Zaten hesabınız var mı? <Link to="/login" style={{ color: '#9A3158', fontWeight: '600', textDecoration: 'none' }}>Giriş Yap</Link></p>
-        </div>
+        {registrationSuccess ? renderSuccessMessage() : renderRegisterForm()}
       </div>
     </div>
   );

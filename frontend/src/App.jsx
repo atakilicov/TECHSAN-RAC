@@ -12,11 +12,12 @@ import Profile from './pages/profile';
 import ForgotPassword from './pages/forgotPassword';
 import ResetPassword from './pages/resetPassword';
 import ChangePassword from './pages/changePassword';
+import AdminDashboard from './pages/adminDashboard';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div className="App">
           <Navbar />
           <main className="main-content">
@@ -33,19 +34,25 @@ function App() {
               {/* Şifre sıfırlama sayfası - URL parametrelerini düzenleme */}
               <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
               
+              {/* Şifre oluşturma sayfası - Kayıt sonrası */}
+              <Route path="/create-password/:uid/:token" element={<ResetPassword />} />
+              
               {/* Şifre değiştirme sayfası */}
               <Route path="/change-password" element={<ChangePassword />} />
               
               {/* Profil sayfası */}
               <Route path="/profile" element={<Profile />} />
               
+              {/* Admin Dashboard */}
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              
               {/* Ana sayfa */}
               <Route path="/" element={<Home />} />
             </Routes>
           </main>
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
