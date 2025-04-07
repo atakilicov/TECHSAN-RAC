@@ -20,6 +20,9 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='i/', blank=True)
     birth_date = models.DateField(blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, choices=CustomUserChoices.TURKISH_CITIES)
+    gender = models.CharField(max_length=10, blank=True, choices=CustomUserChoices.GENDER_CHOICES)
+    role = models.CharField(max_length=10, default='end_user', choices=CustomUserChoices.USER_ROLES)
+    birth_country = models.CharField(max_length=100, blank=True)
 
 
 

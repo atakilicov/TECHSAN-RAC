@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserSerializer, ChangePasswordSerializer, CreatePasswordSerializer
 from .models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -96,7 +96,6 @@ class RegisterView(generics.CreateAPIView):
                     properties={
                         'user': openapi.Schema(type=openapi.TYPE_OBJECT, description='Kullanıcı bilgileri'),
                         'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
-                        'tokens': openapi.Schema(type=openapi.TYPE_OBJECT, description='JWT token bilgileri'),
                     }
                 )
             ),
@@ -109,9 +108,6 @@ class RegisterView(generics.CreateAPIView):
         if serializer.is_valid():
             user = serializer.save()
             
-            # JWT token oluştur
-            refresh = RefreshToken.for_user(user)
-            
             # Kullanıcıdan şifre alanlarını kaldırıyoruz
             user_data = serializer.data
             if 'password' in user_data:
@@ -119,14 +115,43 @@ class RegisterView(generics.CreateAPIView):
             if 'password2' in user_data:
                 del user_data['password2']
             
+            # Şifre oluşturma bağlantısı için token oluşturma
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Şifre oluşturma e-postası gönderme
+            reset_url = f"{settings.FRONTEND_URL}/create-password/{uid}/{token}"
+            
+            # E-posta gönderme
+            email_subject = "Hesabınızı Aktifleştirin - Şifre Oluşturma"
+            email_body = f"""
+            Merhaba {user.first_name},
+            
+            Kaydınız başarıyla tamamlandı. Hesabınızı aktifleştirmek için aşağıdaki bağlantıya tıklayarak şifrenizi oluşturun:
+            
+            {reset_url}
+            
+            Bu bağlantı, güvenliğiniz için 24 saat içinde sona erecektir.
+            
+            Teşekkürler,
+            İlgili Ekip
+            """
+            
+            try:
+                email = EmailMessage(
+                    email_subject,
+                    email_body,
+                    to=[user.email]
+                )
+                email.send(fail_silently=False)
+            except Exception as e:
+                return Response({
+                    "error": f"E-posta gönderilirken bir hata oluştu: {str(e)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
             return Response({
                 "user": user_data,
-                "message": "Kullanıcı başarıyla oluşturuldu",
-                "tokens": {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token)
-                },
-                "redirect_url": "/homepage"  # Yönlendirme URL'si
+                "message": "Kayıt başarılı! Lütfen e-posta adresinizi kontrol edin ve şifrenizi oluşturmak için gönderilen bağlantıya tıklayın."
             }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -172,28 +197,17 @@ class LoginView(APIView):
             refresh = RefreshToken.for_user(user)
             
             # Kullanıcı bilgilerini hazırla
-            user_data = {
-                'id': user.id,
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'phone': user.phone,
-                'address': user.address,
-                'city': user.city,
-            }
-            
-            if user.profile_picture:
-                user_data['profile_picture'] = request.build_absolute_uri(user.profile_picture.url)
+            serialized_user = UserSerializer(user).data
             
             return Response({
-                "user": user_data,
-                "message": "Giriş başarılı",
-                "tokens": {
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token)
+                'user': serialized_user,
+                'message': 'Giriş başarılı',
+                'tokens': {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
                 },
-                "redirect_url": "/homepage"  # Yönlendirme URL'si
-            }, status=status.HTTP_200_OK)
+                'isAdmin': user.role == 'admin'
+            })
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -347,11 +361,11 @@ def generate_random_password(length=8):
 # - Kiralama durumu güncelleme
 
 class LogoutView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     @swagger_auto_schema(
-        operation_description="Kullanıcı çıkışı yapar",
-        operation_summary="Kullanıcı çıkışı",
+        operation_description="Kullanıcıyı sistemden çıkarır ve token'ı geçersizleştirir",
+        operation_summary="Çıkış yap",
         tags=["Kullanıcı İşlemleri"],
         responses={
             status.HTTP_200_OK: openapi.Response(
@@ -363,12 +377,31 @@ class LogoutView(APIView):
                     }
                 )
             ),
+            status.HTTP_400_BAD_REQUEST: "Token geçersizleştirme hatası"
         }
     )
     def post(self, request):
-        # JWT kullanıldığı için backend'de özel bir işlem yapmaya gerek yok
-        # Frontend'de token'lar silindiği sürece kullanıcı çıkış yapmış sayılır
-        return Response({"message": "Çıkış başarılı"}, status=status.HTTP_200_OK)
+        try:
+            # Token'ı geçersizleştir
+            refresh_token = request.data.get('refresh')
+            if refresh_token:
+                try:
+                    token = RefreshToken(refresh_token)
+                    token.blacklist()
+                except Exception as token_error:
+                    # Token geçersizleştirme hatası olsa bile çıkış başarılı
+                    pass
+            
+            # Her durumda başarılı yanıt döndür - frontend token'ları kendi silecek
+            return Response({
+                "message": "Başarıyla çıkış yapıldı."
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            # Yine de başarılı yanıt döndür
+            return Response({
+                "message": "Başarıyla çıkış yapıldı.",
+                "warning": "İşlem sırasında bir hata oluştu ancak çıkış işlemi tamamlandı."
+            }, status=status.HTTP_200_OK)
 
 # Şehirler listesi için API endpoint
 class CitiesView(APIView):
@@ -416,6 +449,199 @@ class UserProfileUpdateView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    parser_classes = [JSONParser]
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcının şifresini değiştirir",
+        operation_summary="Şifre Değiştirme",
+        tags=["Kullanıcı İşlemleri"],
+        request_body=ChangePasswordSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Şifre başarıyla değiştirildi",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz veri",
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası"
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            # Mevcut şifreyi kontrol et
+            current_password = serializer.validated_data['current_password']
+            user = request.user
+            
+            if not user.check_password(current_password):
+                return Response(
+                    {"current_password": ["Mevcut şifre yanlış."]}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Yeni şifreyi ayarla
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            
+            return Response(
+                {"message": "Şifre başarıyla değiştirildi."},
+                status=status.HTTP_200_OK
+            )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteAccountView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcının hesabını siler",
+        operation_summary="Hesap Silme",
+        tags=["Kullanıcı İşlemleri"],
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Hesap başarıyla silindi",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası",
+            status.HTTP_400_BAD_REQUEST: "Silme işlemi başarısız oldu"
+        }
+    )
+    def delete(self, request):
+        try:
+            user = request.user
+            
+            # Hesabı silmeden önce, token'ı geçersizleştir
+            refresh_token = request.data.get('refresh')
+            if refresh_token:
+                try:
+                    token = RefreshToken(refresh_token)
+                    token.blacklist()
+                except Exception as token_error:
+                    # Token geçersizleştirme başarısız olursa bile kullanıcıyı silmek istiyoruz
+                    # O yüzden hata fırlatmadan devam ediyoruz
+                    pass
+            
+            # Hesabı sil
+            user.delete()
+            
+            return Response(
+                {"message": "Hesabınız başarıyla silindi."},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Hesap silme işlemi başarısız oldu: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class CreatePasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    @swagger_auto_schema(
+        operation_description="Kullanıcının ilk defa şifre oluşturması için e-posta gönderir",
+        operation_summary="Şifre Oluşturma",
+        tags=["Kullanıcı İşlemleri"],
+        request_body=CreatePasswordSerializer,
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Şifre oluşturma e-postası gönderildi",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Başarı mesajı'),
+                    }
+                )
+            ),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz veri",
+            status.HTTP_404_NOT_FOUND: "Kullanıcı bulunamadı",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "E-posta gönderme hatası"
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = CreatePasswordSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            # Şifre oluşturma token'ı oluştur
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Frontend URL'sini oluştur
+            reset_url = f"{settings.FRONTEND_URL}/create-password/{uid}/{token}"
+            
+            # E-posta gönder
+            try:
+                html_content = f"""
+                <html>
+                <head>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+                        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                        .header {{ background-color: #4CAF50; color: white; padding: 10px; text-align: center; }}
+                        .content {{ padding: 20px; border: 1px solid #ddd; }}
+                        .button {{ 
+                            display: inline-block;
+                            padding: 10px 20px;
+                            background-color: #4CAF50;
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            margin-top: 15px;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h2>Şifre Oluşturma</h2>
+                        </div>
+                        <div class="content">
+                            <p>Merhaba {user.first_name} {user.last_name},</p>
+                            <p>Şifre oluşturma talebinizi aldık. Aşağıdaki bağlantıya tıklayarak şifrenizi oluşturabilirsiniz:</p>
+                            <p><a href="{reset_url}" class="button">Şifre Oluştur</a></p>
+                            <p>Veya aşağıdaki bağlantıyı tarayıcınıza kopyalayabilirsiniz:</p>
+                            <p>{reset_url}</p>
+                            <p>Bu bağlantı 24 saat boyunca geçerlidir.</p>
+                            <p>Eğer bu talebi siz yapmadıysanız, lütfen bizimle iletişime geçin.</p>
+                            <p>Saygılarımızla,<br>TECHSAN Ekibi</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """
+                
+                email = EmailMessage(
+                    subject="Şifre Oluşturma",
+                    body=html_content,
+                    from_email="limonata0712@gmail.com",
+                    to=[user.email],
+                )
+                email.content_subtype = "html"  # HTML içerik olarak belirt
+                email.send(fail_silently=False)
+                
+                return Response({
+                    "message": "Şifre oluşturma bağlantısı e-posta adresinize gönderildi."
+                }, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({
+                    "error": f"E-posta gönderilirken bir hata oluştu: {str(e)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

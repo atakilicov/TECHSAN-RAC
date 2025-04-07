@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { login as apiLogin } from '../api'; // API fonksiyonlarını import et
+import { login as apiLogin, logout as apiLogout } from '../api'; // API fonksiyonlarını import et
+import { useNavigate } from 'react-router-dom';
 
 // Authentication Context
 // - Kullanıcı kimlik doğrulama durumunu global olarak yönetir
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   
   // Sayfa yüklendiğinde token kontrolü
   useEffect(() => {
@@ -57,12 +59,24 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
   
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
-    setUser(null);
-    setIsAuthenticated(false);
+  // Logout fonksiyonu - API çağrısı yapar ve kullanıcıyı çıkış sayfasına yönlendirir
+  const logout = async () => {
+    try {
+      // API çağrısı
+      await apiLogout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      // State ve localStorage temizleme
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAuthenticated(false);
+      
+      // Login sayfasına yönlendirme
+      navigate('/login');
+    }
   };
   
   return (

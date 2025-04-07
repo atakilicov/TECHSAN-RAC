@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from "../context/AuthContext";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { updateUserProfile, logout, deleteAccount } from '../api';
 
 
 
@@ -21,6 +22,11 @@ const Profile = () => {
     city: user?.city || "",
     birth_date: user?.birth_date ? new Date(user.birth_date).toISOString().split('T')[0] : ""
   });
+  const [userData, setUserData] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const navigate = useNavigate();
 
   // Profil sayfası için modern renkler
   const colors = {
@@ -192,6 +198,123 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Hesap silme işlevi
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    setDeleteError("");
+    
+    try {
+      await deleteAccount();
+      logout(); // Kullanıcıyı logout yap
+      navigate('/login'); // Login sayfasına yönlendir
+    } catch (error) {
+      console.error("Hesap silme hatası:", error);
+      setDeleteError(typeof error === 'object' ? 
+        (error.error || error.message || "Hesap silinemedi.") : 
+        error || "Hesap silinemedi."
+      );
+      setDeleteLoading(false);
+    }
+  };
+
+  // Delete Account Modal
+  const renderDeleteModal = () => {
+    if (!showDeleteModal) return null;
+    
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '0 20px'
+      }}>
+        <div style={{
+          backgroundColor: '#fff',
+          borderRadius: '10px',
+          padding: '25px',
+          width: '100%',
+          maxWidth: '450px',
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)'
+        }}>
+          <h3 style={{
+            margin: '0 0 15px 0',
+            color: '#6D213C',
+            fontSize: '1.4rem'
+          }}>Hesabınızı Silmek İstediğinize Emin Misiniz?</h3>
+          
+          <p style={{
+            margin: '0 0 20px 0',
+            color: '#555',
+            fontSize: '0.95rem',
+            lineHeight: '1.5'
+          }}>
+            Bu işlem geri alınamaz. Hesabınız kalıcı olarak silinecek ve tüm verileriniz kaybolacaktır.
+          </p>
+          
+          {deleteError && (
+            <div style={{
+              backgroundColor: 'rgba(202, 43, 43, 0.1)',
+              color: '#c62828',
+              padding: '10px',
+              borderRadius: '5px',
+              marginBottom: '15px',
+              fontSize: '0.9rem'
+            }}>
+              {deleteError}
+            </div>
+          )}
+          
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '10px',
+            marginTop: '20px'
+          }}>
+            <button 
+              style={{
+                padding: '10px 15px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                backgroundColor: '#f5f5f5',
+                color: '#333',
+                cursor: 'pointer',
+                fontSize: '0.9rem'
+              }}
+              onClick={() => setShowDeleteModal(false)}
+              disabled={deleteLoading}
+            >
+              İptal
+            </button>
+            
+            <button 
+              style={{
+                padding: '10px 15px',
+                borderRadius: '5px',
+                border: 'none',
+                backgroundColor: '#d32f2f',
+                color: '#fff',
+                cursor: deleteLoading ? 'not-allowed' : 'pointer',
+                fontSize: '0.9rem',
+                opacity: deleteLoading ? 0.7 : 1
+              }}
+              onClick={handleDeleteAccount}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? 'İşleniyor...' : 'Hesabımı Sil'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Profil bilgileri gösterimi veya düzenleme formu
@@ -1018,6 +1141,37 @@ const Profile = () => {
                 </Link>
               </div>
             </div>
+            
+            {/* Hesap Silme Bölümü */}
+            <div style={{ 
+              marginTop: '2rem',
+              padding: '1rem',
+              border: '1px solid #f1f1f1',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(255, 240, 240, 0.2)'
+            }}>
+              <h4 style={{ color: '#d32f2f', marginBottom: '0.5rem', fontSize: '1.1rem' }}>
+                Tehlikeli Bölge
+              </h4>
+              <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+                Hesabınızı silmek istiyorsanız, tüm verileriniz kalıcı olarak silinecektir.
+              </p>
+              <button 
+                onClick={() => setShowDeleteModal(true)}
+                style={{
+                  backgroundColor: '#d32f2f',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.8rem 1.2rem',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                Hesabımı Sil
+              </button>
+            </div>
           </div>
         ) : (
           // Kurslar Sekmesi
@@ -1336,6 +1490,8 @@ const Profile = () => {
           </div>
         )}
       </div>
+      
+      {renderDeleteModal()}
       
       {/* CSS Animasyonları */}
       <style>{`
