@@ -95,3 +95,42 @@ class CustomUserChoices():
         ('male', 'Erkek'),
         ('female', 'Kadın'),
     ]
+
+class CarChoices():
+    # Araç türleri
+    CAR_TYPES = [
+        ('sedan', 'Sedan'),
+        ('hatchback', 'Hatchback'),
+        ('suv', 'SUV'),
+        ('crossover', 'Crossover'),
+        ('mpv', 'MPV'),
+        ('coupe', 'Coupe'),
+        ('convertible', 'Convertible'),
+        ('pickup', 'Pickup Truck'),
+        ('van', 'Van'),
+        ('minivan', 'Minivan'),
+    ]
+    
+    # Araç durumu
+    CAR_STATUS = [
+        ('available', 'Müsait'),
+        ('rented', 'Kiralandı'),
+        ('maintenance', 'Bakımda'),
+        ('unavailable', 'Kullanım Dışı'),
+    ]
+    
+    # Yakıt türleri
+    FUEL_TYPES = [
+        ('gasoline', 'Benzin'),
+        ('diesel', 'Dizel'),
+        ('hybrid', 'Hibrit'),
+        ('electric', 'Elektrik'),
+        ('lpg', 'LPG'),
+    ]
+    
+    # Şanzıman türleri
+    TRANSMISSION_TYPES = [
+        ('manual', 'Manuel'),
+        ('automatic', 'Otomatik'),
+        ('semi_automatic', 'Yarı Otomatik'),
+    ]

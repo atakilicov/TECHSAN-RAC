@@ -11,7 +11,7 @@ drf-yasg==1.21.7
 Pillow==10.1.0
 
 # E-posta ve SSL Sertifikaları
-certifi==2025.1.31
+certifi==2023.11.17
 pyOpenSSL==23.3.0
 
 # Güvenlik
@@ -41,4 +41,7 @@ pytz==2023.3
 requests==2.31.0
 
 # Hata Ayıklama ve Geliştirme Araçları
-django-debug-toolbar==4.2.0; python_version >= '3.8' 
+django-debug-toolbar==4.2.0; python_version >= '3.8'
+
+# Token Blacklist İçin Gerekli
+djangorestframework-simplejwt[crypto]>=5.0.0,<6.0.0 

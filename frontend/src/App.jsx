@@ -2,17 +2,21 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // Bileşenler
-import Navbar from './components/Navbar';
+import Home from './pages/home';
 import Login from './pages/login';
 import Register from './pages/register';
-import Home from './pages/home';
 import Profile from './pages/profile';
 import ForgotPassword from './pages/forgotPassword';
 import ResetPassword from './pages/resetPassword';
 import ChangePassword from './pages/changePassword';
 import AdminDashboard from './pages/adminDashboard';
+import CreateCar from './pages/CreateCar';
+import EditCar from './pages/EditCar';
+import CarDetail from './pages/CarDetail';
 
 function App() {
   return (
@@ -44,12 +48,21 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               
               {/* Admin Dashboard */}
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              
+              {/* Araç Yönetimi */}
+              <Route path="/admin/cars/create" element={<CreateCar />} />
+              <Route path="/admin/cars/edit/:id" element={<EditCar />} />
               
               {/* Ana sayfa */}
               <Route path="/" element={<Home />} />
+              
+              {/* CarDetail sayfası */}
+              <Route path="/cars/:id" element={<CarDetail />} />
             </Routes>
           </main>
+          <Footer />
         </div>
       </AuthProvider>
     </Router>

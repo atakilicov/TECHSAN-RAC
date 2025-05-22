@@ -1,0 +1,1 @@
+# Bu dosya Django'nun cars klasörünü bir Python paketi olarak tanımasını sağlar 
