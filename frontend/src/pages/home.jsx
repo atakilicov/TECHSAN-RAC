@@ -1,15 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchCars, getCarFilterOptions, API_BASE_URL } from '../api';
-import { FaCalendarAlt, FaMapMarkerAlt, FaSearch, FaFilter, FaSort, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { m, AnimatePresence } from 'framer-motion';
+import { FaCalendarAlt, FaMapMarkerAlt, FaSearch, FaFilter, FaCar, FaCogs, FaGasPump } from 'react-icons/fa';
+
+const popularBrands = [
+  { value: 'Toyota', models: ['Corolla', 'Yaris', 'RAV4', 'Camry', 'C-HR'] },
+  { value: 'Volkswagen', models: ['Golf', 'Passat', 'Polo', 'Tiguan', 'Jetta'] },
+  { value: 'Renault', models: ['Clio', 'Megane', 'Symbol', 'Captur', 'Kadjar'] },
+  { value: 'Ford', models: ['Focus', 'Fiesta', 'Kuga', 'Puma', 'Mondeo'] },
+  { value: 'Hyundai', models: ['i20', 'i30', 'Tucson', 'Kona', 'Elantra'] },
+  { value: 'Mercedes-Benz', models: ['A-Serisi', 'C-Serisi', 'E-Serisi', 'GLA', 'CLA'] },
+  { value: 'BMW', models: ['1 Serisi', '3 Serisi', '5 Serisi', 'X1', 'X3'] },
+  { value: 'Audi', models: ['A3', 'A4', 'A6', 'Q3', 'Q5'] },
+  { value: 'Fiat', models: ['Egea', 'Panda', '500', 'Doblo', 'Tipo'] },
+  { value: 'Honda', models: ['Civic', 'CR-V', 'Jazz', 'HR-V', 'Accord'] }
+];
+
+const fuelTypes = [
+  { value: '', label: 'Tüm Yakıt Tipleri' },
+  { value: 'gasoline', label: 'Benzin' },
+  { value: 'diesel', label: 'Dizel' },
+  { value: 'hybrid', label: 'Hibrit' },
+  { value: 'electric', label: 'Elektrik' },
+  { value: 'lpg', label: 'LPG' }
+];
 
 const Home = () => {
   const navigate = useNavigate();
   
   const [searchParams, setSearchParams] = useState({
     brand: '',
+    model: '',
     year: '',
-    carType: ''
+    car_type: '',
+    transmission: '',
+    fuel_type: '',
+    start_date: '',
+    end_date: ''
   });
 
   const [offices] = useState([
@@ -24,7 +52,9 @@ const Home = () => {
   const [filterOptions, setFilterOptions] = useState({
     brands: [],
     carTypes: [],
-    years: []
+    years: [],
+    transmissionTypes: [],
+    fuelTypes: []
   });
   const [accordion, setAccordion] = useState({
     brand: true,
@@ -35,6 +65,23 @@ const Home = () => {
   const [searchError, setSearchError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  const [transmissionTypes] = useState([
+    { value: 'manual', label: 'Manuel' },
+    { value: 'automatic', label: 'Otomatik' }
+  ]);
+
+  const [fuelTypes] = useState([
+    { value: '', label: 'Tüm Yakıt Tipleri' },
+    { value: 'gasoline', label: 'Benzin' },
+    { value: 'diesel', label: 'Dizel' },
+    { value: 'hybrid', label: 'Hibrit' },
+    { value: 'electric', label: 'Elektrik' },
+    { value: 'lpg', label: 'LPG' }
+  ]);
+
+  const [modelOptions, setModelOptions] = useState([]);
+  const [sortBy, setSortBy] = useState('');
+
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
@@ -42,8 +89,10 @@ const Home = () => {
         console.log('Filter Options:', options);
         setFilterOptions({
           brands: options.brands || [],
-          carTypes: options.carTypes || [],
-          years: options.years || []
+          carTypes: options.car_types || [],
+          years: options.years || [],
+          transmissionTypes: options.transmission_types || transmissionTypes,
+          fuelTypes: options.fuel_types || fuelTypes
         });
       } catch (error) {
         console.error('Filtre seçenekleri yüklenemedi:', error);
@@ -58,6 +107,11 @@ const Home = () => {
       ...prev,
       [name]: value
     }));
+    if (name === 'brand') {
+      const selectedBrand = popularBrands.find(b => b.value === value);
+      setModelOptions(selectedBrand ? selectedBrand.models : []);
+      setSearchParams(prev => ({ ...prev, model: '' }));
+    }
   };
 
   const handleAccordion = (key) => {
@@ -70,19 +124,40 @@ const Home = () => {
     setSearchError(null);
     
     try {
-      const results = await searchCars({
-        brand: searchParams.brand,
-        year: searchParams.year,
-        carType: searchParams.carType
-      });
-      setCars(results.cars);
+      // URL parametrelerini oluştur
+      const queryParams = new URLSearchParams();
       
-      if (results.cars.length === 0) {
+      // Parametreleri ekle (sadece değeri olanları)
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (value) {
+          queryParams.append(key, value);
+        }
+      });
+      
+      console.log('Arama parametreleri:', Object.fromEntries(queryParams)); // Debug için
+      const results = await searchCars(Object.fromEntries(queryParams));
+      
+      console.log('API yanıtı:', results); // Debug için
+      
+      let carsArr = results && results.cars ? results.cars : [];
+      // Sıralama uygula
+      if (sortBy) {
+        carsArr = [...carsArr];
+        if (sortBy === 'year-asc') carsArr.sort((a, b) => a.year - b.year);
+        if (sortBy === 'year-desc') carsArr.sort((a, b) => b.year - a.year);
+        if (sortBy === 'brand-asc') carsArr.sort((a, b) => (a.brand || '').localeCompare(b.brand || ''));
+        if (sortBy === 'brand-desc') carsArr.sort((a, b) => (b.brand || '').localeCompare(a.brand || ''));
+        if (sortBy === 'price-asc') carsArr.sort((a, b) => (a.daily_price || 0) - (b.daily_price || 0));
+        if (sortBy === 'price-desc') carsArr.sort((a, b) => (b.daily_price || 0) - (a.daily_price || 0));
+      }
+      
+      setCars(carsArr);
+      if (carsArr.length === 0) {
         setSearchError('Belirtilen kriterlere uygun araç bulunamadı.');
       }
     } catch (error) {
-      setSearchError('Araç arama sırasında bir hata oluştu.');
       console.error('Araç arama hatası:', error);
+      setSearchError('Araç arama sırasında bir hata oluştu.');
     } finally {
       setIsLoading(false);
     }
@@ -90,290 +165,466 @@ const Home = () => {
 
   const styles = {
     container: {
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/road-background.jpg")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      paddingTop: '50px',
-      color: '#fff'
+      color: '#fff',
+      fontFamily: 'Inter, sans-serif',
     },
-    header: {
+    hero: {
+      height: '75vh',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      padding: '0 20px',
+    },
+    heroBackground: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.0) 85%), url("/images/Rollsroyce.jpeg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      zIndex: 0,
+    },
+    heroContent: {
+      position: 'relative',
+      zIndex: 1,
+      maxWidth: '1200px',
+      width: '100%',
       textAlign: 'center',
-      marginBottom: '40px'
+      marginTop: '-50px',
     },
     title: {
-      fontSize: '4rem',
-      fontWeight: '800',
-      marginBottom: '1rem',
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      backgroundImage: 'linear-gradient(135deg, #fff, #6D213C)',
+      fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+      fontFamily: 'Playfair Display, serif',
+      fontWeight: '700',
+      marginBottom: '1.5rem',
+      background: 'linear-gradient(135deg, #FFFFFF 0%, #8B0000 100%)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
-      textShadow: '0 5px 15px rgba(0,0,0,0.2)'
+      textShadow: '0 5px 15px rgba(0,0,0,0.2)',
     },
     subtitle: {
-      fontSize: '2rem',
+      fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
       fontWeight: '300',
       marginBottom: '2rem',
-      color: '#fff'
+      color: '#F4F6F8',
+      maxWidth: '800px',
+      margin: '0 auto 2rem',
     },
     searchBox: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '15px',
+      background: 'rgba(20, 20, 20, 0.85)',
+      backdropFilter: 'blur(16px)',
+      borderRadius: '20px',
       padding: '20px',
-      width: '90%',
-      maxWidth: '500px',
-      marginBottom: '40px',
-      boxShadow: '0 4px 24px rgba(0,0,0,0.2)'
+      maxWidth: '1000px',
+      margin: '0 auto',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+      border: 'none',
     },
-    inputGroup: {
-      display: 'flex',
-      gap: '10px',
+    filterGroup: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '15px',
       marginBottom: '15px',
-      flexWrap: 'wrap',
-      justifyContent: 'center'
     },
-    inputWrapper: {
-      flex: '1 1 120px',
-      position: 'relative',
-      minWidth: '120px'
+    filterLabel: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: '8px',
+      color: '#fff',
+      fontSize: '0.9rem',
+      fontWeight: '500',
     },
-    input: {
+    select: {
       width: '100%',
-      padding: '10px 10px 10px 15px',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      borderRadius: '8px',
+      padding: '12px 15px',
+      background: 'rgba(255, 255, 255, 0.08)',
+      border: 'none',
+      borderRadius: '10px',
       color: '#fff',
       fontSize: '15px',
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
     },
     searchButton: {
-      backgroundColor: '#FF5722',
+      background: '#222',
       color: '#fff',
       border: 'none',
-      padding: '12px 0',
-      borderRadius: '8px',
-      fontSize: '17px',
-      fontWeight: 'bold',
+      padding: '15px 40px',
+      borderRadius: '10px',
+      fontSize: '18px',
+      fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.3s ease',
       width: '100%',
-      marginTop: '10px'
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '10px',
     },
     carGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-      gap: '30px',
-      width: '90%',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+      gap: '20px',
+      padding: '20px',
       maxWidth: '1200px',
-      margin: '50px auto'
+      margin: '20px auto 0',
+      position: 'relative',
+      zIndex: 2,
     },
     carCard: {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      background: 'linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%)',
       backdropFilter: 'blur(10px)',
       borderRadius: '15px',
-      padding: '20px',
-      transition: 'all 0.3s ease'
+      overflow: 'hidden',
+      transition: 'all 0.3s ease',
+      border: '1px solid rgba(139, 0, 0, 0.1)',
+      boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
+      '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 8px 20px rgba(139, 0, 0, 0.15)',
+        borderColor: '#8B0000',
+      },
     },
-    section: {
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      borderRadius: '12px',
-      padding: '30px',
-      margin: '30px 0',
-      width: '90%',
-      maxWidth: '900px',
-      color: '#fff',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.15)'
+    carImage: {
+      width: '100%',
+      height: '180px',
+      objectFit: 'cover',
+      borderRadius: '15px 15px 0 0',
     },
-    sectionTitle: {
-      fontSize: '1.7rem',
-      fontWeight: '700',
+    carInfo: {
+      padding: '15px',
+      background: 'transparent',
+    },
+    carTitle: {
+      fontSize: '18px',
+      fontWeight: '600',
+      marginBottom: '10px',
+      color: '#8B0000',
+    },
+    carDetails: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '8px',
       marginBottom: '15px',
-      color: '#FF5722'
+      color: '#333',
     },
-    sectionText: {
-      fontSize: '1.1rem',
-      fontWeight: '400',
-      marginBottom: '10px'
+    carDetailItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      fontSize: '13px',
+      color: '#555',
+      '& svg': {
+        color: '#8B0000',
+        fontSize: '14px',
+      },
     },
-    testimonial: {
-      fontStyle: 'italic',
-      color: '#ffe082',
-      marginBottom: '10px'
+    carPrice: {
+      fontSize: '22px',
+      fontWeight: '700',
+      color: '#8B0000',
+      marginBottom: '15px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '8px 0',
+      borderTop: '1px solid rgba(139, 0, 0, 0.1)',
+      borderBottom: '1px solid rgba(139, 0, 0, 0.1)',
     },
-    testimonialAuthor: {
-      fontWeight: 'bold',
-      color: '#fffde7'
-    }
+    priceLabel: {
+      fontSize: '13px',
+      color: '#666',
+    },
+    detailsButton: {
+      background: '#8B0000',
+      color: '#fff',
+      padding: '10px 20px',
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+      width: '100%',
+      border: 'none',
+      '&:hover': {
+        background: '#6d0000',
+      },
+    },
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>
-          TECHSAN<br/>Rent A Car
-        </h1>
-        <h2 style={styles.subtitle}>Lüks Araç Kiralama Hizmeti</h2>
-      </div>
+    <m.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={styles.container}
+    >
+      <section style={styles.hero}>
+        <div style={styles.heroBackground} />
+        <div style={styles.heroContent}>
+          <m.h1 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            style={styles.title}
+          >
+            TECHSAN Premium Car Rental
+          </m.h1>
+          <m.p
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={styles.subtitle}
+          >
+            Lüks ve konforun kusursuz birleşimi ile unutulmaz sürüş deneyimi
+          </m.p>
 
-      <div style={styles.searchBox}>
-        <form onSubmit={handleSearch}>
-          {/* Marka */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleAccordion('brand')}>
-              <span style={{ fontWeight: 600, fontSize: 16 }}>Marka</span>
-              {accordion.brand ? <FaChevronUp style={{ marginLeft: 8 }} /> : <FaChevronDown style={{ marginLeft: 8 }} />}
-            </div>
-            {accordion.brand && (
-              <div style={styles.inputGroup}>
-                <div style={styles.inputWrapper}>
+          <m.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            style={styles.searchBox}
+          >
+            <form onSubmit={handleSearch}>
+              <div style={{ marginBottom: 16, textAlign: 'right' }}>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{ ...styles.select, maxWidth: 220 }}>
+                  <option value="">Sıralama Yok</option>
+                  <option value="year-asc">Yıl (Artan)</option>
+                  <option value="year-desc">Yıl (Azalan)</option>
+                  <option value="brand-asc">Marka (A-Z)</option>
+                  <option value="brand-desc">Marka (Z-A)</option>
+                  <option value="price-asc">Fiyat (Artan)</option>
+                  <option value="price-desc">Fiyat (Azalan)</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+                <div>
+                  <div style={styles.filterLabel}>Başlangıç Tarihi</div>
+                  <input type="date" name="start_date" value={searchParams.start_date} onChange={handleSearchParamChange} style={{ ...styles.select, padding: '10px 12px' }} />
+                </div>
+                <div>
+                  <div style={styles.filterLabel}>Bitiş Tarihi</div>
+                  <input type="date" name="end_date" value={searchParams.end_date} onChange={handleSearchParamChange} style={{ ...styles.select, padding: '10px 12px' }} />
+                </div>
+              </div>
+              <div style={styles.filterGroup}>
+                <div>
+                  <div style={styles.filterLabel}>
+                    <FaCar style={{ marginRight: '8px' }} /> Marka
+                  </div>
                   <select
                     name="brand"
                     value={searchParams.brand}
                     onChange={handleSearchParamChange}
-                    style={styles.input}
+                    style={styles.select}
                   >
-                    <option value="">Tümü</option>
+                    <option value="">Tüm Markalar</option>
                     {(filterOptions.brands || []).map(brand => (
                       <option key={brand} value={brand}>{brand}</option>
                     ))}
                   </select>
                 </div>
-              </div>
-            )}
-          </div>
-          {/* Yıl */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleAccordion('year')}>
-              <span style={{ fontWeight: 600, fontSize: 16 }}>Yıl</span>
-              {accordion.year ? <FaChevronUp style={{ marginLeft: 8 }} /> : <FaChevronDown style={{ marginLeft: 8 }} />}
-            </div>
-            {accordion.year && (
-              <div style={styles.inputGroup}>
-                <div style={styles.inputWrapper}>
+
+                <div>
+                  <div style={styles.filterLabel}>
+                    <FaCalendarAlt style={{ marginRight: '8px' }} /> Model Yılı
+                  </div>
                   <select
                     name="year"
                     value={searchParams.year}
                     onChange={handleSearchParamChange}
-                    style={styles.input}
+                    style={styles.select}
                   >
-                    <option value="">Tümü</option>
+                    <option value="">Tüm Yıllar</option>
                     {(filterOptions.years || []).map(year => (
                       <option key={year} value={year}>{year}</option>
                     ))}
                   </select>
                 </div>
-              </div>
-            )}
-          </div>
-          {/* Araç Türü */}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleAccordion('carType')}>
-              <span style={{ fontWeight: 600, fontSize: 16 }}>Araç Türü</span>
-              {accordion.carType ? <FaChevronUp style={{ marginLeft: 8 }} /> : <FaChevronDown style={{ marginLeft: 8 }} />}
-            </div>
-            {accordion.carType && (
-              <div style={styles.inputGroup}>
-                <div style={styles.inputWrapper}>
+
+                <div>
+                  <div style={styles.filterLabel}>
+                    <FaCar style={{ marginRight: '8px' }} /> Model
+                  </div>
                   <select
-                    name="carType"
-                    value={searchParams.carType}
+                    name="model"
+                    value={searchParams.model}
                     onChange={handleSearchParamChange}
-                    style={styles.input}
+                    style={styles.select}
+                    disabled={!modelOptions.length}
                   >
-                    <option value="">Tümü</option>
+                    <option value="">Tüm Modeller</option>
+                    {modelOptions.map(model => (
+                      <option key={model} value={model}>{model}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <div style={styles.filterLabel}>
+                    <FaCogs style={{ marginRight: '8px' }} /> Araç Tipi
+                  </div>
+                  <select
+                    name="car_type"
+                    value={searchParams.car_type}
+                    onChange={handleSearchParamChange}
+                    style={styles.select}
+                  >
+                    <option value="">Tüm Tipler</option>
                     {(filterOptions.carTypes || []).map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
                 </div>
+
+                <div style={styles.filterSection}>
+                  <label style={styles.label}>Vites Tipi</label>
+                  <select
+                    name="transmission"
+                    value={searchParams.transmission}
+                    onChange={handleSearchParamChange}
+                    style={styles.select}
+                  >
+                    <option value="">Tüm Vites Tipleri</option>
+                    {(filterOptions.transmissionTypes || transmissionTypes).map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={styles.filterSection}>
+                  <label style={styles.label}>Yakıt Tipi</label>
+                  <select
+                    name="fuel_type"
+                    value={searchParams.fuel_type}
+                    onChange={handleSearchParamChange}
+                    style={styles.select}
+                  >
+                    <option value="">Tüm Yakıt Tipleri</option>
+                    {(filterOptions.fuelTypes || fuelTypes).map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            )}
-          </div>
-          <button
-            type="submit"
-            style={styles.searchButton}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#FF7043'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#FF5722'}
+
+              <m.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                style={styles.searchButton}
+              >
+                <FaSearch size={20} />
+                Araç Ara
+              </m.button>
+            </form>
+          </m.div>
+        </div>
+      </section>
+
+      <AnimatePresence>
+        {cars.length > 0 && (
+          <m.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            style={styles.carGrid}
           >
-            <FaSearch style={{ marginRight: '10px' }} />
-            Araç Ara
-          </button>
-        </form>
-
-        {isLoading && (
-          <div style={{ textAlign: 'center', marginTop: '20px', color: '#fff' }}>
-            Araçlar yükleniyor...
-          </div>
+            {cars.map((car, index) => (
+              <m.div
+                key={car.id || index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                style={styles.carCard}
+              >
+                <img
+                  src={car.image ? `${API_BASE_URL}${car.image}` : '/images/default-car.jpg'}
+                  alt={`${car.brand} ${car.model}`}
+                  style={styles.carImage}
+                />
+                <div style={styles.carInfo}>
+                  <h3 style={styles.carTitle}>{car.brand} {car.model}</h3>
+                  <div style={styles.carDetails}>
+                    <div style={styles.carDetailItem}>
+                      <FaCalendarAlt />
+                      <span>Yıl: {car.year || 'Belirtilmemiş'}</span>
+                    </div>
+                    <div style={styles.carDetailItem}>
+                      <FaCar />
+                      <span>Tip: {car.car_type || car.carType || 'Belirtilmemiş'}</span>
+                    </div>
+                    <div style={styles.carDetailItem}>
+                      <FaCogs />
+                      <span>Vites: {
+                        (filterOptions.transmissionTypes || transmissionTypes).find(t => t.value === car.transmission)?.label || 'Belirtilmemiş'
+                      }</span>
+                    </div>
+                    <div style={styles.carDetailItem}>
+                      <FaGasPump />
+                      <span>Yakıt: {car.fuel_type || car.fuelType || 'Belirtilmemiş'}</span>
+                    </div>
+                  </div>
+                  <div style={styles.carPrice}>
+                    <span style={styles.priceLabel}>Günlük Fiyat</span>
+                    <span>{car.daily_price ? `${Number(car.daily_price).toLocaleString('tr-TR')} TL` : 'Belirtilmemiş'}</span>
+                  </div>
+                  <Link to={`/cars/${car.id}`}>
+                    <m.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      style={styles.detailsButton}
+                    >
+                      Detayları Gör
+                    </m.button>
+                  </Link>
+                </div>
+              </m.div>
+            ))}
+          </m.div>
         )}
+      </AnimatePresence>
 
-        {searchError && (
-          <div style={{ textAlign: 'center', marginTop: '20px', color: '#ff6b6b' }}>
-            {searchError}
-          </div>
-        )}
-      </div>
-
-      {cars.length > 0 && (
-        <div style={styles.carGrid}>
-          {cars.map(car => (
-            <div 
-              key={car.id} 
-              style={styles.carCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <img 
-                src={car.image ? API_BASE_URL + car.image : '/images/default-car.jpg'} 
-                alt={`${car.brand} ${car.model}`}
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: '10px',
-                  marginBottom: '10px'
-                }}
-              />
-              <h3>{car.brand} {car.model}</h3>
-              <p>Yıl: {car.year}</p>
-              <p>Araç Türü: {car.carType}</p>
-              <p>Günlük Fiyat: {car.dailyPrice} TL</p>
-              <Link to={`/cars/${car.id}`}>
-                <button
-                  style={{
-                    backgroundColor: '#FF5722',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#FF7043'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = '#FF5722'}
-                >
-                  Detaylar
-                </button>
-              </Link>
-            </div>
-          ))}
+      {isLoading && (
+        <div style={{ textAlign: 'center', padding: '50px', color: '#8B0000' }}>
+          <m.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          >
+            <FaSearch size={40} />
+          </m.div>
+          <p style={{ marginTop: '20px' }}>Araçlar Yükleniyor...</p>
         </div>
       )}
-    </div>
+
+      {searchError && (
+        <m.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            textAlign: 'center',
+            padding: '20px',
+            margin: '20px auto',
+            maxWidth: '600px',
+            background: 'rgba(139, 0, 0, 0.1)',
+            borderRadius: '10px',
+            color: '#ff6b6b'
+          }}
+        >
+          {searchError}
+        </m.div>
+      )}
+    </m.div>
   );
 };
 

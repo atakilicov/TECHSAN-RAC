@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-from .choice import CustomUserChoices, CarChoices
+from .choices import CarChoices, CustomUserChoices
 # Kullanıcı Profil Modeli
 # - Kullanıcıya ait ek bilgileri içerecek (telefon, adres, profil resmi)
 # - Django'nun varsayılan User modeline bağlanacak
@@ -36,7 +36,7 @@ class Car(models.Model):
     color = models.CharField(max_length=50, blank=True)
     seat_count = models.IntegerField(default=5)
     fuel_type = models.CharField(max_length=50, choices=CarChoices.FUEL_TYPES)
-    transmission = models.CharField(max_length=50, choices=CarChoices.TRANSMISSION_TYPES)
+    transmission = models.CharField(max_length=50, choices=CarChoices.TRANSMISSION_CHOICES)
     image = models.ImageField(upload_to='cars/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

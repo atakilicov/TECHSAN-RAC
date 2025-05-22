@@ -23,7 +23,6 @@ class CarChoices:
     TRANSMISSION_CHOICES = [
         ('manual', 'Manuel'),
         ('automatic', 'Otomatik'),
-        ('semi_automatic', 'Yarı Otomatik'),
     ]
 
     CAR_STATUS = [
@@ -31,4 +30,30 @@ class CarChoices:
         ('rented', 'Kiralandı'),
         ('maintenance', 'Bakımda'),
         ('unavailable', 'Kullanım Dışı'),
+    ]
+
+class CustomUserChoices:
+    TURKISH_CITIES = [
+        ('istanbul', 'İstanbul'),
+        ('ankara', 'Ankara'),
+        ('izmir', 'İzmir'),
+        ('bursa', 'Bursa'),
+        ('antalya', 'Antalya'),
+        ('adana', 'Adana'),
+        ('gaziantep', 'Gaziantep'),
+        ('konya', 'Konya'),
+        ('mersin', 'Mersin'),
+        ('diyarbakir', 'Diyarbakır'),
+    ]
+
+    GENDER_CHOICES = [
+        ('male', 'Erkek'),
+        ('female', 'Kadın'),
+        ('other', 'Diğer'),
+    ]
+
+    USER_ROLES = [
+        ('admin', 'Admin'),
+        ('staff', 'Personel'),
+        ('end_user', 'Kullanıcı'),
     ] 

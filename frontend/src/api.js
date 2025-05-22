@@ -478,24 +478,26 @@ export const getCarOptions = async () => {
 // Araç arama fonksiyonu
 export const searchCars = async (params) => {
   try {
-    const response = await axios.get(`${API_URL}/cars/search/`, { 
-      params: {
-        start_date: params.startDate,
-        end_date: params.endDate,
-        brand: params.brand,
-        car_type: params.carType,
-        transmission: params.transmission,
-        fuel_type: params.fuelType,
-        min_price: params.minPrice,
-        max_price: params.maxPrice,
-        sort_by: params.sortBy,
-        order: params.order
+    // URL parametrelerini oluştur
+    const queryParams = new URLSearchParams();
+    
+    // Parametreleri URL'e ekle (sadece değeri olanları)
+    Object.entries(params).forEach(([key, value]) => {
+      if (value && value !== '') {  // Boş string kontrolü eklendi
+        queryParams.append(key, value.toLowerCase());  // Değerleri küçük harfe çevir
       }
     });
+    
+    const searchUrl = `cars/search/?${queryParams.toString()}`;
+    console.log('Search URL:', searchUrl); // Debug için
+    
+    // GET isteği gönder
+    const response = await api.get(searchUrl);
+    console.log('Search API response:', response.data); // Debug için
     return response.data;
   } catch (error) {
-    console.error('Araç arama hatası:', error);
-    throw error;
+    console.error('Search API error:', error);
+    throw error.response ? error.response.data : error.message;
   }
 };
 

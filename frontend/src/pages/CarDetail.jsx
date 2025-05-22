@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link }from 'react-router-dom';
 import { getCarDetails, API_BASE_URL } from '../api';
 import { AuthContext } from '../context/AuthContext';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaCar, FaCogs, FaGasPump, FaPalette, FaUsers, FaIdCard, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { m } from 'framer-motion';
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -30,167 +31,312 @@ const CarDetail = () => {
 
   const styles = {
     container: {
-      padding: '40px 20px',
-      maxWidth: '900px',
-      margin: '0 auto',
-      fontFamily: '"Roboto", sans-serif',
-      color: '#333',
-      backgroundColor: '#f9f9f9',
-      minHeight: 'calc(100vh - 80px)'
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #18181c 0%, #23232b 100%)',
+      color: '#fff',
+      padding: '32px 8px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
-    backLink: {
+    card: {
+      width: '100%',
+      maxWidth: '500px',
+      background: 'rgba(30, 30, 34, 0.98)',
+      borderRadius: '22px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+      overflow: 'hidden',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
+    },
+    imageContainer: {
+      width: '100%',
+      aspectRatio: '16/9',
+      background: '#222',
+      position: 'relative',
+      overflow: 'hidden',
+      borderBottom: '1px solid rgba(255,255,255,0.07)',
+    },
+    carImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      display: 'block',
+      transition: 'transform 0.3s',
+    },
+    infoContainer: {
+      padding: '28px 22px 18px 22px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '18px',
+    },
+    header: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+      alignItems: 'flex-start',
+    },
+    title: {
+      fontSize: '2rem',
+      fontWeight: '700',
+      color: '#fff',
+      fontFamily: 'Playfair Display, serif',
+      margin: 0,
+    },
+    statusBadge: {
       display: 'inline-flex',
       alignItems: 'center',
-      textDecoration: 'none',
-      color: '#555',
-      marginBottom: '30px',
+      gap: '8px',
+      padding: '6px 14px',
+      borderRadius: '8px',
+      fontSize: '14px',
+      fontWeight: '500',
+      background: 'rgba(244, 67, 54, 0.13)',
+      color: '#FF5252',
+      border: '1px solid rgba(244, 67, 54, 0.2)',
+    },
+    availableStatus: {
+      background: 'rgba(52, 168, 83, 0.13)',
+      color: '#4CAF50',
+      border: '1px solid rgba(76, 175, 80, 0.2)',
+    },
+    price: {
+      fontSize: '1.5rem',
+      color: '#fff',
+      fontWeight: '700',
+      background: 'rgba(255,255,255,0.08)',
+      borderRadius: '8px',
+      padding: '8px 18px',
+      alignSelf: 'flex-end',
+      marginTop: '-38px',
+      marginBottom: '8px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+    },
+    detailsGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '12px',
+    },
+    detailCard: {
+      background: 'rgba(255,255,255,0.04)',
+      padding: '10px 12px',
+      borderRadius: '8px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      fontSize: '14px',
+      color: '#fff',
+    },
+    detailIcon: {
       fontSize: '16px',
-      transition: 'color 0.3s ease'
+      color: '#bbb',
+    },
+    detailInfo: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    detailLabel: {
+      fontSize: '11px',
+      color: '#aaa',
+      marginBottom: '1px',
+    },
+    detailValue: {
+      fontSize: '14px',
+      color: '#fff',
+      fontWeight: '500',
+    },
+    description: {
+      background: 'rgba(255,255,255,0.04)',
+      padding: '12px',
+      borderRadius: '8px',
+      fontSize: '14px',
+      color: '#eee',
+      marginTop: '6px',
+    },
+    reserveButton: {
+      display: 'block',
+      background: 'linear-gradient(135deg, #4CAF50 0%, #388E3C 100%)',
+      color: '#fff',
+      padding: '14px',
+      borderRadius: '10px',
+      textDecoration: 'none',
+      fontSize: '16px',
+      fontWeight: '600',
+      textAlign: 'center',
+      border: 'none',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
+      marginTop: '10px',
+      letterSpacing: '0.5px',
+      '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: '0 5px 15px rgba(76, 175, 80, 0.2)',
+      },
+    },
+    disabledButton: {
+      background: 'linear-gradient(135deg, #9E9E9E 0%, #757575 100%)',
+      cursor: 'not-allowed',
+      opacity: '0.8',
+      '&:hover': {
+        transform: 'none',
+        boxShadow: 'none',
+      },
     },
     loadingContainer: {
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '300px',
-      fontSize: '20px',
-      color: '#555'
+      minHeight: '60vh',
+      gap: '20px',
     },
     errorContainer: {
       textAlign: 'center',
-      padding: '30px',
-      backgroundColor: '#ffebee',
-      color: '#c62828',
-      borderRadius: '8px',
-      border: '1px solid #ef9a9a'
-    },
-    carGrid: {
-      display: 'grid',
-      gridTemplateColumns: '1fr',
-      gap: '30px',
-      backgroundColor: '#fff',
-      padding: '30px',
+      padding: '40px',
+      background: 'rgba(244, 67, 54, 0.1)',
       borderRadius: '12px',
-      boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+      border: '1px solid rgba(244, 67, 54, 0.2)',
+      maxWidth: '600px',
+      margin: '0 auto',
     },
-    imageContainer: {
-      textAlign: 'center'
-    },
-    carImage: {
-      maxWidth: '100%',
-      maxHeight: '450px',
-      objectFit: 'cover',
-      borderRadius: '10px',
-      boxShadow: '0 5px 15px rgba(0,0,0,0.1)'
-    },
-    carInfo: {
-      paddingLeft: '0px'
-    },
-    title: {
-      fontSize: '36px',
-      fontWeight: '700',
-      color: '#FF5722', // Ana renk turuncu
-      marginBottom: '15px',
-      borderBottom: '2px solid #FFDEAD', // Açık turuncu alt çizgi
-      paddingBottom: '10px'
-    },
-    detailItem: {
-      fontSize: '18px',
-      marginBottom: '12px',
-      color: '#444',
-      display: 'flex',
-      alignItems: 'center'
-    },
-    detailLabel: {
-      fontWeight: '600',
-      minWidth: '130px',
-      marginRight: '10px',
-      color: '#222'
-    },
-    price: {
-      fontSize: '28px',
-      fontWeight: 'bold',
-      color: '#FF5722',
-      marginTop: '25px',
-      marginBottom: '25px'
-    },
-    description: {
-      fontSize: '17px',
-      lineHeight: '1.7',
-      color: '#555',
-      marginTop: '20px',
-      paddingTop: '20px',
-      borderTop: '1px solid #eee'
-    },
-    reserveButton: {
-      backgroundColor: '#FF5722',
-      color: 'white',
-      padding: '15px 30px',
-      border: 'none',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      fontSize: '18px',
-      fontWeight: 'bold',
-      transition: 'background-color 0.3s ease, transform 0.2s ease',
-      marginTop: '20px',
-      display: 'block',
-      width: '100%',
-      textAlign: 'center',
-      textDecoration: 'none'
-    }
   };
 
   if (loading) {
-    return <div style={styles.loadingContainer}>Araç detayları yükleniyor...</div>;
+    return (
+      <div style={styles.container}>
+        <div style={styles.loadingContainer}>
+          <m.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          >
+            <FaCar size={40} color="#8B0000" />
+          </m.div>
+        </div>
+      </div>
+    );
   }
 
-  if (error) {
-    return <div style={styles.container}><div style={styles.errorContainer}>{error}</div></div>;
+  if (error || !car) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.errorContainer}>
+          <h2>{error || 'Araç bulunamadı.'}</h2>
+          <Link to="/" style={styles.backLink}>
+            <FaArrowLeft style={{ marginRight: '8px' }} /> Ana Sayfaya Dön
+          </Link>
+        </div>
+      </div>
+    );
   }
 
-  if (!car) {
-    return <div style={styles.container}><div style={styles.errorContainer}>Araç bulunamadı.</div></div>;
-  }
+  const isAvailable = car.status === 'available';
 
   return (
     <div style={styles.container}>
       <Link to="/" style={styles.backLink}>
         <FaArrowLeft style={{ marginRight: '8px' }} /> Ana Sayfaya Dön
       </Link>
-      <div style={styles.carGrid}>
+      <div style={styles.card}>
         <div style={styles.imageContainer}>
           <img 
             src={car.image ? `${API_BASE_URL}${car.image}` : '/images/default-car.jpg'} 
             alt={`${car.brand} ${car.model}`} 
-            style={styles.carImage} 
+            style={styles.carImage}
           />
         </div>
-        <div style={styles.carInfo}>
-          <h1 style={styles.title}>{car.brand} {car.model}</h1>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Yıl:</span> {car.year}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Renk:</span> {car.color || 'Belirtilmemiş'}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Koltuk Sayısı:</span> {car.seat_count || 'Belirtilmemiş'}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Araç Tipi:</span> {car.car_type}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Şanzıman:</span> {car.transmission}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Yakıt Türü:</span> {car.fuel_type}</div>
-          <div style={styles.detailItem}><span style={styles.detailLabel}>Plaka:</span> {car.plate_number}</div>
-          
-          <div style={styles.price}>{parseFloat(car.daily_price).toFixed(2)} TL/gün</div>
-          
+        <div style={styles.infoContainer}>
+          <div style={styles.header}>
+            <h1 style={styles.title}>{car.brand} {car.model}</h1>
+            <div 
+              style={{
+                ...styles.statusBadge,
+                ...(isAvailable ? styles.availableStatus : {}),
+              }}
+            >
+              {isAvailable ? (
+                <>
+                  <FaCheckCircle /> Kiralamaya Uygun
+                </>
+              ) : (
+                <>
+                  <FaTimesCircle /> Şu Anda Kiralık
+                </>
+              )}
+            </div>
+          </div>
+          <div style={styles.price}>
+            {Number(car.daily_price).toLocaleString('tr-TR')} TL/gün
+          </div>
+          <div style={styles.detailsGrid}>
+            <div style={styles.detailCard}>
+              <FaCalendarAlt style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Model Yılı</span>
+                <span style={styles.detailValue}>{car.year}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaCar style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Araç Tipi</span>
+                <span style={styles.detailValue}>{car.car_type}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaCogs style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Şanzıman</span>
+                <span style={styles.detailValue}>{car.transmission}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaGasPump style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Yakıt Türü</span>
+                <span style={styles.detailValue}>{car.fuel_type}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaPalette style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Renk</span>
+                <span style={styles.detailValue}>{car.color || 'Belirtilmemiş'}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaUsers style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Koltuk Sayısı</span>
+                <span style={styles.detailValue}>{car.seat_count || 'Belirtilmemiş'}</span>
+              </div>
+            </div>
+            <div style={styles.detailCard}>
+              <FaIdCard style={styles.detailIcon} />
+              <div style={styles.detailInfo}>
+                <span style={styles.detailLabel}>Plaka</span>
+                <span style={styles.detailValue}>{car.plate_number}</span>
+              </div>
+            </div>
+          </div>
           {car.description && (
             <div style={styles.description}>
-              <h3 style={{color: '#333', marginBottom: '10px'}}>Açıklama</h3>
-              <p>{car.description}</p>
+              <strong>Araç Hakkında:</strong> {car.description}
             </div>
           )}
-
-          {isAuthenticated ? (
-            <Link to={`/reservation/${car.id}`} style={styles.reserveButton}>
-              Şimdi Kirala
-            </Link>
-          ) : (
-            <Link to="/login" style={styles.reserveButton}>
-              Kiralamak için Giriş Yapın
-            </Link>
+          {isAuthenticated && (
+            <div>
+              {isAvailable ? (
+                <Link to={`/reservation/${car.id}`} style={styles.reserveButton}>
+                  Hemen Kirala
+                </Link>
+              ) : (
+                <div style={{...styles.reserveButton, ...styles.disabledButton}}>
+                  Araç Şu Anda Kiralık
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

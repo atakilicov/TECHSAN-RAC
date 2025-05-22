@@ -15,7 +15,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.mail import send_mail, EmailMessage
 import random
 import string
-from .choice import CustomUserChoices, CarChoices
+from .choices import CustomUserChoices, CarChoices
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str

@@ -14,6 +14,8 @@ class CarFilterOptionsView(APIView):
         filter_options = {
             'brands': brands,
             'carTypes': [{'value': val, 'label': label} for val, label in CarChoices.CAR_TYPES],
+            'transmissionTypes': [{'value': val, 'label': label} for val, label in CarChoices.TRANSMISSION_CHOICES],
+            'fuelTypes': [{'value': val, 'label': label} for val, label in CarChoices.FUEL_TYPES],
             'years': years
         }
         

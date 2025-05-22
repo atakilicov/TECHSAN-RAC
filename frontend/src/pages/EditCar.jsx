@@ -93,7 +93,6 @@ const EditCar = () => {
           ],
           transmission_types: [
             {value: 'manual', label: 'Manuel'}, {value: 'automatic', label: 'Otomatik'},
-            {value: 'semi_automatic', label: 'Yarı Otomatik'},
           ]
         };
         setOptions(staticOptions);
