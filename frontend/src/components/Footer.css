@@ -1,0 +1,43 @@
+.footer-container {
+  background: rgba(20,20,20,0.85);
+  color: #eee;
+  padding: 24px 20px 12px 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-family: 'Inter', sans-serif;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.footer-content p {
+  margin: 0 0 15px 0;
+  font-size: 1em;
+}
+
+.footer-links a {
+  color: #eee;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 0.95em;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Mobil cihazlar için bazı ayarlamalar */
+@media (max-width: 768px) {
+  .footer-links a {
+    display: block;
+    margin: 8px 0;
+  }
+  .footer-content p {
+    font-size: 0.9em;
+  }
+} 

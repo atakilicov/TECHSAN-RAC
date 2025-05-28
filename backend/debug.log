@@ -1,0 +1,164 @@
+INFO 2025-05-22 17:00:30,168 autoreload Watching for file changes with StatReloader
+INFO 2025-05-22 17:00:35,298 autoreload Watching for file changes with StatReloader
+INFO 2025-05-22 17:01:29,163 autoreload Watching for file changes with StatReloader
+INFO 2025-05-22 17:05:21,029 autoreload /Users/atakilic/Desktop/TECHSAN-RAC/backend/cars/urls.py changed, reloading.
+INFO 2025-05-22 17:05:21,318 autoreload Watching for file changes with StatReloader
+INFO 2025-05-22 17:05:33,593 autoreload Watching for file changes with StatReloader
+DEBUG 2025-05-22 17:05:42,974 search_view Gelen parametreler: {'transmission': ['manual']}
+DEBUG 2025-05-22 17:05:42,975 search_view Vites filtresi eklendi: transmission__iexact=manual
+DEBUG 2025-05-22 17:05:42,975 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'manual'))
+DEBUG 2025-05-22 17:05:42,976 search_view Filtreleme sonrası araç sayısı: 3
+DEBUG 2025-05-22 17:05:42,976 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:42,976 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:42,976 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:42,978 search_view Döndürülen araç sayısı: 3
+DEBUG 2025-05-22 17:05:53,732 search_view Gelen parametreler: {'fuel_type': ['diesel']}
+DEBUG 2025-05-22 17:05:53,732 search_view Yakıt filtresi eklendi: fuel_type__iexact=diesel
+DEBUG 2025-05-22 17:05:53,732 search_view Uygulanan filtre: (AND: ('fuel_type__iexact', 'diesel'))
+DEBUG 2025-05-22 17:05:53,733 search_view Filtreleme sonrası araç sayısı: 4
+DEBUG 2025-05-22 17:05:53,734 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:53,734 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:05:53,734 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:53,734 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:05:53,735 search_view Döndürülen araç sayısı: 4
+DEBUG 2025-05-22 17:06:04,490 search_view Gelen parametreler: {'transmission': ['automatic'], 'fuel_type': ['diesel']}
+DEBUG 2025-05-22 17:06:04,490 search_view Vites filtresi eklendi: transmission__iexact=automatic
+DEBUG 2025-05-22 17:06:04,491 search_view Yakıt filtresi eklendi: fuel_type__iexact=diesel
+DEBUG 2025-05-22 17:06:04,491 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'automatic'), ('fuel_type__iexact', 'diesel'))
+DEBUG 2025-05-22 17:06:04,493 search_view Filtreleme sonrası araç sayısı: 1
+DEBUG 2025-05-22 17:06:04,494 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:06:04,496 search_view Döndürülen araç sayısı: 1
+DEBUG 2025-05-22 17:06:41,167 search_view Gelen parametreler: {'transmission': ['manual']}
+DEBUG 2025-05-22 17:06:41,168 search_view Vites filtresi eklendi: transmission__iexact=manual
+DEBUG 2025-05-22 17:06:41,168 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'manual'))
+DEBUG 2025-05-22 17:06:41,169 search_view Filtreleme sonrası araç sayısı: 3
+DEBUG 2025-05-22 17:06:41,170 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:06:41,170 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:06:41,170 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:06:41,172 search_view Döndürülen araç sayısı: 3
+INFO 2025-05-22 17:09:06,844 autoreload /Users/atakilic/Desktop/TECHSAN-RAC/backend/cars/views/search_view.py changed, reloading.
+INFO 2025-05-22 17:09:07,201 autoreload Watching for file changes with StatReloader
+DEBUG 2025-05-22 17:09:10,176 search_view Gelen parametreler: {'transmission': ['manual']}
+DEBUG 2025-05-22 17:09:10,176 search_view Vites filtresi eklendi: transmission__iexact=manual
+DEBUG 2025-05-22 17:09:10,176 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'manual'))
+DEBUG 2025-05-22 17:09:10,177 search_view Filtreleme sonrası araç sayısı: 3
+DEBUG 2025-05-22 17:09:10,177 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:10,177 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:10,178 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:10,179 search_view Döndürülen araç sayısı: 3
+DEBUG 2025-05-22 17:09:13,824 search_view Gelen parametreler: {'transmission': ['automatic']}
+DEBUG 2025-05-22 17:09:13,824 search_view Vites filtresi eklendi: transmission__iexact=automatic
+DEBUG 2025-05-22 17:09:13,824 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'automatic'))
+DEBUG 2025-05-22 17:09:13,826 search_view Filtreleme sonrası araç sayısı: 2
+DEBUG 2025-05-22 17:09:13,826 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-22 17:09:13,827 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:09:13,829 search_view Döndürülen araç sayısı: 2
+DEBUG 2025-05-22 17:09:17,267 search_view Gelen parametreler: {}
+DEBUG 2025-05-22 17:09:17,268 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-22 17:09:17,269 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:17,269 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-22 17:09:17,269 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:09:17,269 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:17,269 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:09:17,271 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-22 17:14:24,407 search_view Gelen parametreler: {}
+DEBUG 2025-05-22 17:14:24,408 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-22 17:14:24,408 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:24,408 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-22 17:14:24,408 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:14:24,408 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:24,409 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:24,411 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-22 17:14:27,726 search_view Gelen parametreler: {}
+DEBUG 2025-05-22 17:14:27,727 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-22 17:14:27,728 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:27,728 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-22 17:14:27,728 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:14:27,728 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:27,728 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:27,730 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-22 17:14:30,344 search_view Gelen parametreler: {}
+DEBUG 2025-05-22 17:14:30,345 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-22 17:14:30,346 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:30,346 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-22 17:14:30,346 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-22 17:14:30,346 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:30,346 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-22 17:14:30,348 search_view Döndürülen araç sayısı: 5
+INFO 2025-05-28 04:31:47,712 autoreload Watching for file changes with StatReloader
+DEBUG 2025-05-28 04:32:09,290 search_view Gelen parametreler: {'brand': ['ford']}
+DEBUG 2025-05-28 04:32:09,290 search_view Uygulanan filtre: (AND: ('brand__icontains', 'ford'))
+DEBUG 2025-05-28 04:32:09,294 search_view Filtreleme sonrası araç sayısı: 1
+DEBUG 2025-05-28 04:32:09,295 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:32:09,299 search_view Döndürülen araç sayısı: 1
+DEBUG 2025-05-28 04:32:12,353 search_view Gelen parametreler: {'brand': ['renault']}
+DEBUG 2025-05-28 04:32:12,353 search_view Uygulanan filtre: (AND: ('brand__icontains', 'renault'))
+DEBUG 2025-05-28 04:32:12,356 search_view Filtreleme sonrası araç sayısı: 1
+DEBUG 2025-05-28 04:32:12,356 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:12,359 search_view Döndürülen araç sayısı: 1
+DEBUG 2025-05-28 04:32:15,026 search_view Gelen parametreler: {'brand': ['mercedes-benz']}
+DEBUG 2025-05-28 04:32:15,026 search_view Uygulanan filtre: (AND: ('brand__icontains', 'mercedes-benz'))
+DEBUG 2025-05-28 04:32:15,028 search_view Filtreleme sonrası araç sayısı: 1
+DEBUG 2025-05-28 04:32:15,029 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:15,031 search_view Döndürülen araç sayısı: 1
+DEBUG 2025-05-28 04:32:17,857 search_view Gelen parametreler: {}
+DEBUG 2025-05-28 04:32:17,859 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-28 04:32:17,860 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:17,860 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:32:17,860 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:17,860 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:17,860 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:17,863 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-28 04:32:21,282 search_view Gelen parametreler: {'transmission': ['manual']}
+DEBUG 2025-05-28 04:32:21,282 search_view Vites filtresi eklendi: transmission__iexact=manual
+DEBUG 2025-05-28 04:32:21,282 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'manual'))
+DEBUG 2025-05-28 04:32:21,285 search_view Filtreleme sonrası araç sayısı: 3
+DEBUG 2025-05-28 04:32:21,286 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:21,286 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:21,286 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:21,289 search_view Döndürülen araç sayısı: 3
+DEBUG 2025-05-28 04:32:23,918 search_view Gelen parametreler: {'transmission': ['automatic']}
+DEBUG 2025-05-28 04:32:23,918 search_view Vites filtresi eklendi: transmission__iexact=automatic
+DEBUG 2025-05-28 04:32:23,919 search_view Uygulanan filtre: (AND: ('transmission__iexact', 'automatic'))
+DEBUG 2025-05-28 04:32:23,921 search_view Filtreleme sonrası araç sayısı: 2
+DEBUG 2025-05-28 04:32:23,922 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:32:23,922 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:23,924 search_view Döndürülen araç sayısı: 2
+DEBUG 2025-05-28 04:32:26,784 search_view Gelen parametreler: {}
+DEBUG 2025-05-28 04:32:26,786 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-28 04:32:26,787 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:26,787 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:32:26,787 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:26,787 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:26,787 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:26,789 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-28 04:32:28,711 search_view Gelen parametreler: {'fuel_type': ['gasoline']}
+DEBUG 2025-05-28 04:32:28,711 search_view Yakıt filtresi eklendi: fuel_type__iexact=gasoline
+DEBUG 2025-05-28 04:32:28,711 search_view Uygulanan filtre: (AND: ('fuel_type__iexact', 'gasoline'))
+DEBUG 2025-05-28 04:32:28,713 search_view Filtreleme sonrası araç sayısı: 0
+DEBUG 2025-05-28 04:32:28,715 search_view Döndürülen araç sayısı: 0
+DEBUG 2025-05-28 04:32:31,617 search_view Gelen parametreler: {'fuel_type': ['diesel']}
+DEBUG 2025-05-28 04:32:31,617 search_view Yakıt filtresi eklendi: fuel_type__iexact=diesel
+DEBUG 2025-05-28 04:32:31,617 search_view Uygulanan filtre: (AND: ('fuel_type__iexact', 'diesel'))
+DEBUG 2025-05-28 04:32:31,619 search_view Filtreleme sonrası araç sayısı: 4
+DEBUG 2025-05-28 04:32:31,620 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:31,620 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:31,621 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:31,621 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:31,623 search_view Döndürülen araç sayısı: 4
+DEBUG 2025-05-28 04:32:37,000 search_view Gelen parametreler: {}
+DEBUG 2025-05-28 04:32:37,002 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-28 04:32:37,003 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:37,003 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:32:37,003 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:32:37,003 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:37,003 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:32:37,006 search_view Döndürülen araç sayısı: 5
+DEBUG 2025-05-28 04:34:12,057 search_view Gelen parametreler: {}
+DEBUG 2025-05-28 04:34:12,058 search_view Filtreleme sonrası araç sayısı: 5
+DEBUG 2025-05-28 04:34:12,059 search_view Filtrelenmiş araç: ID: 1, Marka: Toyota, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:34:12,059 search_view Filtrelenmiş araç: ID: 2, Marka: Ford, Vites: automatic, Yakıt: hybrid
+DEBUG 2025-05-28 04:34:12,059 search_view Filtrelenmiş araç: ID: 3, Marka: Renault, Vites: automatic, Yakıt: diesel
+DEBUG 2025-05-28 04:34:12,059 search_view Filtrelenmiş araç: ID: 4, Marka: Mercedes-Benz, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:34:12,059 search_view Filtrelenmiş araç: ID: 5, Marka: BMW, Vites: manual, Yakıt: diesel
+DEBUG 2025-05-28 04:34:12,063 search_view Döndürülen araç sayısı: 5

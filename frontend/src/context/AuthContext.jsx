@@ -10,14 +10,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Sayfa yüklendiğinde token varsa kullanıcı bilgilerini al
     const checkLoggedIn = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       if (token) {
         try {
           const userData = await getProfile();
           setUser(userData);
         } catch (error) {
           console.error("Oturum doğrulama hatası:", error);
-          localStorage.removeItem('token');
+          localStorage.removeItem('access_token');
         }
       }
       setLoading(false);
@@ -28,13 +28,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const data = await apiLogin(email, password);
-    localStorage.setItem('token', data.token);
+    // token değil, access_token olarak saklıyoruz
+    // localStorage.setItem('token', data.token);
     setUser(data.user);
     return data;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 

@@ -6,8 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserSerializer, ChangePasswordSerializer, CreatePasswordSerializer
-from .models import CustomUser
+from .serializers import RegisterSerializer, LoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer, UserSerializer, ChangePasswordSerializer, CreatePasswordSerializer, CarSerializer
+from .models import CustomUser, Car
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.contrib.auth import authenticate
@@ -15,7 +15,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.mail import send_mail, EmailMessage
 import random
 import string
-from .choice import CustomUserChoices
+from .choices import CustomUserChoices, CarChoices
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -644,4 +644,194 @@ class CreatePasswordView(APIView):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CarViewSet(viewsets.ModelViewSet):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    parser_classes = [FormParser, MultiPartParser, JSONParser]
+    
+    def get_permissions(self):
+        """
+        Admin yetkisi gerekli işlemler için izin kontrolü
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
+    
+    @swagger_auto_schema(
+        operation_description="Araç listesini getirir",
+        operation_summary="Araçları Listele",
+        tags=["Araç İşlemleri"],
+        responses={
+            status.HTTP_200_OK: CarSerializer(many=True)
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        operation_description="Belirtilen ID'ye sahip aracın detaylarını getirir",
+        operation_summary="Araç Detayı",
+        tags=["Araç İşlemleri"],
+        responses={
+            status.HTTP_200_OK: CarSerializer(),
+            status.HTTP_404_NOT_FOUND: "Araç bulunamadı"
+        }
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        operation_description="Yeni bir araç oluşturur (Sadece admin kullanıcılar için)",
+        operation_summary="Araç Oluştur",
+        tags=["Araç İşlemleri"],
+        request_body=CarSerializer,
+        responses={
+            status.HTTP_201_CREATED: CarSerializer(),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz veri",
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası"
+        }
+    )
+    def create(self, request, *args, **kwargs):
+        # Kullanıcı admin değilse engelleyin
+        if request.user.role != 'admin':
+            return Response({"error": "Bu işlem için admin yetkisi gereklidir."}, 
+                            status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_description="Belirtilen ID'ye sahip aracı günceller (Sadece admin kullanıcılar için)",
+        operation_summary="Araç Güncelle",
+        tags=["Araç İşlemleri"],
+        request_body=CarSerializer,
+        responses={
+            status.HTTP_200_OK: CarSerializer(),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz veri",
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası",
+            status.HTTP_404_NOT_FOUND: "Araç bulunamadı"
+        }
+    )
+    def update(self, request, *args, **kwargs):
+        # Kullanıcı admin değilse engelleyin
+        if request.user.role != 'admin':
+            return Response({"error": "Bu işlem için admin yetkisi gereklidir."}, 
+                            status=status.HTTP_403_FORBIDDEN)
+        
+        return super().update(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        operation_description="Belirtilen ID'ye sahip aracı kısmen günceller (Sadece admin kullanıcılar için)",
+        operation_summary="Araç Kısmen Güncelle",
+        tags=["Araç İşlemleri"],
+        request_body=CarSerializer,
+        responses={
+            status.HTTP_200_OK: CarSerializer(),
+            status.HTTP_400_BAD_REQUEST: "Geçersiz veri",
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası",
+            status.HTTP_404_NOT_FOUND: "Araç bulunamadı"
+        }
+    )
+    def partial_update(self, request, *args, **kwargs):
+        # Kullanıcı admin değilse engelleyin
+        if request.user.role != 'admin':
+            return Response({"error": "Bu işlem için admin yetkisi gereklidir."}, 
+                            status=status.HTTP_403_FORBIDDEN)
+        
+        return super().partial_update(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        operation_description="Belirtilen ID'ye sahip aracı siler (Sadece admin kullanıcılar için)",
+        operation_summary="Araç Sil",
+        tags=["Araç İşlemleri"],
+        responses={
+            status.HTTP_204_NO_CONTENT: "Araç başarıyla silindi",
+            status.HTTP_401_UNAUTHORIZED: "Yetkilendirme hatası",
+            status.HTTP_404_NOT_FOUND: "Araç bulunamadı"
+        }
+    )
+    def destroy(self, request, *args, **kwargs):
+        # Kullanıcı admin değilse engelleyin
+        if request.user.role != 'admin':
+            return Response({"error": "Bu işlem için admin yetkisi gereklidir."}, 
+                            status=status.HTTP_403_FORBIDDEN)
+        
+        return super().destroy(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Araç seçeneklerini (türler, yakıt, şanzıman, durum) getirir",
+        operation_summary="Araç Seçenekleri",
+        tags=["Araç İşlemleri"],
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description="Araç seçenekleri",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'car_types': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'value': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'label': openapi.Schema(type=openapi.TYPE_STRING)
+                                }
+                            )
+                        ),
+                        'car_status': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'value': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'label': openapi.Schema(type=openapi.TYPE_STRING)
+                                }
+                            )
+                        ),
+                        'fuel_types': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'value': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'label': openapi.Schema(type=openapi.TYPE_STRING)
+                                }
+                            )
+                        ),
+                        'transmission_types': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'value': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'label': openapi.Schema(type=openapi.TYPE_STRING)
+                                }
+                            )
+                        ),
+                    }
+                )
+            )
+        }
+    )
+    def get_car_options(self, request):
+        # Seçenekleri formatla
+        car_types = [{'value': t[0], 'label': t[1]} for t in CarChoices.CAR_TYPES]
+        car_status = [{'value': s[0], 'label': s[1]} for s in CarChoices.CAR_STATUS]
+        fuel_types = [{'value': f[0], 'label': f[1]} for f in CarChoices.FUEL_TYPES]
+        transmission_types = [{'value': t[0], 'label': t[1]} for t in CarChoices.TRANSMISSION_TYPES]
+        
+        return Response({
+            'car_types': car_types,
+            'car_status': car_status,
+            'fuel_types': fuel_types,
+            'transmission_types': transmission_types
+        }, status=status.HTTP_200_OK)
 

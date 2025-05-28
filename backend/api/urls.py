@@ -1,8 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
-from .views import RegisterView, EmailTokenObtainPairView, LoginView, ForgotPasswordView, ResetPasswordView, CitiesView, UserProfileUpdateView, ChangePasswordView, DeleteAccountView, CreatePasswordView, LogoutView
+from rest_framework.routers import DefaultRouter
+from .views import RegisterView, EmailTokenObtainPairView, LoginView, ForgotPasswordView, ResetPasswordView, CitiesView, UserProfileUpdateView, ChangePasswordView, DeleteAccountView, CreatePasswordView, LogoutView, CarViewSet
+
+# ViewSet'ler için router tanımlama
+router = DefaultRouter()
+router.register(r'cars', CarViewSet, basename='car')
 
 urlpatterns = [
     # Kullanıcı işlemleri
@@ -20,4 +25,10 @@ urlpatterns = [
     # Genel
     path('cities/', CitiesView.as_view(), name='cities'),
     path('users/profile/', UserProfileUpdateView.as_view(), name='user-profile'),
+    
+    # Araç seçenekleri için özel endpoint
+    path('cars/options/', CarViewSet.as_view({'get': 'get_car_options'}), name='car-options'),
+    
+    # ViewSet'ler için rotaları dahil et
+    path('', include(router.urls)),
 ] 

@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import techsanLogo from '../assets/TECHSANLOGO.png';
 // Font Awesome ikonları için import
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUser, faSignInAlt, faUserPlus, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUser, faSignInAlt, faUserPlus, faSignOutAlt, faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -37,6 +37,12 @@ const Navbar = () => {
           </Link>
           {user ? (
             <>
+              {user.role === 'admin' && (
+                <Link to="/admin">
+                  <FontAwesomeIcon icon={faTachometerAlt} />
+                  Yönetim Paneli
+                </Link>
+              )}
               <Link to="/profile">
                 <FontAwesomeIcon icon={faUser} />
                 Profilim

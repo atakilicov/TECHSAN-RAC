@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 // API'nin temel URL'i - Backend sunucusunun adresi
-const API_URL = 'http://127.0.0.1:8000/api/';
+const API_ROOT_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_ENDPOINT_PATH = '/api';
+const API_URL = `${API_ROOT_URL}${API_ENDPOINT_PATH}`;
+
+export const API_BASE_URL = API_ROOT_URL; // Bunu dışa aktarıyoruz
 
 // Axios instance oluşturma
 // Axios, HTTP istekleri yapmak için kullanılan bir JavaScript kütüphanesidir
@@ -25,6 +29,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;  // JWT token formatı: "Bearer [token]"
     }
+    
+    // Eğer veri FormData ise, Axios'un otomatik olarak Content-Type'ı ayarlamasına izin ver
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => {
@@ -319,6 +329,203 @@ export const updateUserProfile = async (userData) => {
   } catch (error) {
     console.error("Profil güncelleme hatası:", error);
     throw error.response?.data || { error: "Profil güncellenemedi" };
+  }
+};
+
+/**
+ * Kullanıcı Profil Bilgilerini Getir
+ * 
+ * @returns {Promise} - API'den dönen kullanıcı profil bilgileri
+ * 
+ * Bu fonksiyon, giriş yapmış kullanıcının profil bilgilerini almak için kullanılır.
+ * JWT token ile yetkilendirilmiş bir istek gönderilmesi gerekir.
+ */
+export const getProfile = async () => {
+  try {
+    const response = await api.get('users/profile/');
+    return response.data;
+  } catch (error) {
+    console.error("Profil bilgileri alınamadı:", error);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// -------------------------
+// Car API İstekleri (Araç İşlemleri)
+// -------------------------
+
+/**
+ * Araç Listesini Getirme Fonksiyonu
+ * 
+ * @returns {Promise} - API'den dönen araç listesi
+ * 
+ * Bu fonksiyon, sistemdeki tüm araçların listesini almak için kullanılır.
+ */
+export const getCars = async () => {
+  try {
+    const response = await api.get('cars/');
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Araç Detaylarını Getirme Fonksiyonu
+ * 
+ * @param {string|number} carId - Araç ID'si
+ * @returns {Promise} - API'den dönen araç detayları
+ * 
+ * Bu fonksiyon, belirli bir aracın detaylarını almak için kullanılır.
+ */
+export const getCarDetails = async (carId) => {
+  try {
+    console.log(`cars/${carId}/ endpointine istek gönderiliyor...`);
+    const response = await api.get(`cars/${carId}/`);
+    console.log("API yanıtı (getCarDetails):", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("getCarDetails hata:", error);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Yeni Araç Oluşturma Fonksiyonu
+ * 
+ * @param {Object} carData - Araç bilgileri
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, yeni bir araç eklemek için kullanılır.
+ * Form data olarak gönderilmelidir, özellikle resim yüklemesi varsa.
+ */
+export const createCar = async (carData) => {
+  try {
+    // FormData kullanıldığında Axios otomatik olarak Content-Type'ı multipart/form-data olarak ayarlar
+    // Ancak bazı durumlarda açıkça belirtmek daha güvenlidir
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    
+    // API isteği gönder
+    const response = await api.post('cars/', carData, config);
+    return response.data;
+  } catch (error) {
+    console.error('API Hata Detayı:', error.response ? error.response.data : error.message);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Araç Güncelleme Fonksiyonu
+ * 
+ * @param {string|number} carId - Araç ID'si
+ * @param {Object} carData - Güncellenecek araç bilgileri
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, belirli bir aracın bilgilerini güncellemek için kullanılır.
+ */
+export const updateCar = async (carId, carData) => {
+  try {
+    // carData bir FormData nesnesi olabilir, bu durumda headers otomatik olarak ayarlanır
+    const response = await api.put(`cars/${carId}/`, carData);
+    return response.data;
+  } catch (error) {
+    console.error('API Hata Detayı:', error.response ? error.response.data : error.message);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Araç Silme Fonksiyonu
+ * 
+ * @param {string|number} carId - Araç ID'si
+ * @returns {Promise} - API'den dönen yanıt
+ * 
+ * Bu fonksiyon, belirli bir aracı sistemden silmek için kullanılır.
+ */
+export const deleteCar = async (carId) => {
+  try {
+    const response = await api.delete(`cars/${carId}/`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+/**
+ * Araç Seçenekleri Getirme Fonksiyonu
+ * 
+ * @returns {Promise} - API'den dönen araç türleri, yakıt türleri, vb. seçenekleri
+ * 
+ * Bu fonksiyon, araç formunda kullanılacak seçenekleri (araç türleri, yakıt türleri, vb.) 
+ * almak için kullanılır.
+ */
+export const getCarOptions = async () => {
+  try {
+    console.log("cars/options/ endpointine istek gönderiliyor...");
+    const response = await api.get('cars/options/');
+    console.log("API yanıtı (getCarOptions):", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("getCarOptions hata:", error);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Araç arama fonksiyonu
+export const searchCars = async (params) => {
+  try {
+    // URL parametrelerini oluştur
+    const queryParams = new URLSearchParams();
+    
+    // Parametreleri URL'e ekle (sadece değeri olanları)
+    Object.entries(params).forEach(([key, value]) => {
+      if (value && value !== '') {  // Boş string kontrolü eklendi
+        queryParams.append(key, value.toLowerCase());  // Değerleri küçük harfe çevir
+      }
+    });
+    
+    const searchUrl = `cars/search/?${queryParams.toString()}`;
+    console.log('Search URL:', searchUrl); // Debug için
+    
+    // GET isteği gönder
+    const response = await api.get(searchUrl);
+    console.log('Search API response:', response.data); // Debug için
+    return response.data;
+  } catch (error) {
+    console.error('Search API error:', error);
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Araç filtreleme seçeneklerini getir
+export const getCarFilterOptions = async () => {
+  try {
+    const response = await api.get('cars/filter-options/');
+    return {
+      brands: response.data.brands || [],
+      models: response.data.models || [],
+      carTypes: response.data.carTypes || [],
+      fuelTypes: response.data.fuelTypes || [],
+      years: response.data.years || [],
+      minPrice: response.data.minPrice || 0,
+      maxPrice: response.data.maxPrice || 0
+    };
+  } catch (error) {
+    console.error('Filtre seçenekleri yükleme hatası:', error);
+    // Varsayılan boş liste döndür
+    return {
+      brands: [],
+      models: [],
+      carTypes: [],
+      fuelTypes: [],
+      years: [],
+      minPrice: 0,
+      maxPrice: 0
+    };
   }
 };
 

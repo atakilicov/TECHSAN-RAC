@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import CustomUser
+from .models import CustomUser, Car
 from drf_yasg.utils import swagger_serializer_method
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -269,3 +269,19 @@ class CreatePasswordSerializer(serializers.Serializer):
         
         attrs['user'] = user
         return attrs
+
+class CarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = ['id', 'brand', 'model', 'year', 'plate_number', 'daily_price', 
+                 'car_type', 'status', 'description', 'color', 'seat_count', 
+                 'fuel_type', 'transmission', 'image', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def validate_plate_number(self, value):
+        # Plaka numarasının benzersiz olup olmadığını kontrol et
+        # Eğer bu bir güncelleme ise, aynı plaka numarasına sahip olan araç bu araç mı kontrol et
+        instance = getattr(self, 'instance', None)
+        if Car.objects.filter(plate_number=value).exclude(pk=getattr(instance, 'pk', None)).exists():
+            raise serializers.ValidationError("Bu plaka numarası zaten kullanılıyor.")
+        return value
